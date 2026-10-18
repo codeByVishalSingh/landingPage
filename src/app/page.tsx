@@ -21,6 +21,13 @@ import { WishlistDrawer } from "@/components/WishlistDrawer";
 import { Toast } from "@/components/Toast";
 import { CategoryBanners } from "@/components/CategoryBanners";
 import { BrandPillars } from "@/components/BrandPillars";
+import { EditorialLivingBanner } from "@/components/EditorialLivingBanner";
+import { CuratedSpaces } from "@/components/CuratedSpaces";
+import { BedroomShowcase } from "@/components/BedroomShowcase";
+import { DiningShowcase } from "@/components/DiningShowcase";
+import { CraftsmanshipSection } from "@/components/CraftsmanshipSection";
+import { JournalSection } from "@/components/JournalSection";
+import { SustainableBanner } from "@/components/SustainableBanner";
 
 const CustomCursor = dynamic(
   () => import("@/components/CustomCursor").then((mod) => mod.CustomCursor),
@@ -319,6 +326,39 @@ export default function Home() {
           </div>
         </section>
 
+        {/* Full-Bleed Architectural Living Banner (Behance Section 3) */}
+        <EditorialLivingBanner onQuickView={setQuickViewProduct} />
+
+        {/* Curated Spaces & Room Collections (Behance Section 4) */}
+        <CuratedSpaces
+          currency={currency}
+          onQuickView={setQuickViewProduct}
+          onAddToCart={(p, f) => {
+            handleAddToCart(p, f, 1);
+            setIsCartOpen(true);
+          }}
+        />
+
+        {/* Bedroom Atmosphere & Restorative Illumination (Behance Section 5) */}
+        <BedroomShowcase
+          currency={currency}
+          onQuickView={setQuickViewProduct}
+          onAddToCart={(p, f) => {
+            handleAddToCart(p, f, 1);
+            setIsCartOpen(true);
+          }}
+        />
+
+        {/* Dining & Hospitality Dialogue (Behance Section 6) */}
+        <DiningShowcase
+          currency={currency}
+          onQuickView={setQuickViewProduct}
+          onAddToCart={(p, f) => {
+            handleAddToCart(p, f, 1);
+            setIsCartOpen(true);
+          }}
+        />
+
         {/* Real-time 3D Studio & Configurator (Three.js WebGL) */}
         <ThreeProductViewer
           currency={currency}
@@ -327,6 +367,15 @@ export default function Home() {
 
         {/* Cinematography & Brand Film Showcase */}
         <VideoShowcase />
+
+        {/* Brand Philosophy & Danish Craftsmanship (Behance Section 7) */}
+        <CraftsmanshipSection />
+
+        {/* The Audo Journal & Editorial Stories (Behance Section 8) */}
+        <JournalSection />
+
+        {/* Sustainable by Design Architectural Banner (Behance Section 9) */}
+        <SustainableBanner />
 
         {/* The Audo House Lookbook Hotspot Section */}
         <LookbookHotspot

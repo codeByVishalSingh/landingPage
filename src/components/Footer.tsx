@@ -278,6 +278,31 @@ export const Footer: React.FC = () => {
           </div>
         </div>
 
+        {/* Massive Architectural Audo Watermark from Behance Case Study */}
+        <div
+          style={{
+            textAlign: "center",
+            padding: "3rem 0 1rem",
+            userSelect: "none",
+            pointerEvents: "none",
+            overflow: "hidden",
+          }}
+        >
+          <span
+            style={{
+              fontFamily: "var(--font-serif)",
+              fontSize: "clamp(5.5rem, 20vw, 16.5rem)",
+              fontWeight: 400,
+              lineHeight: 0.8,
+              letterSpacing: "-0.04em",
+              color: "rgba(255, 255, 255, 0.06)",
+              display: "block",
+            }}
+          >
+            Audo
+          </span>
+        </div>
+
         {/* Bottom Bar: Copyright & Brand */}
         <div
           style={{

@@ -148,22 +148,36 @@ export const Hero: React.FC = () => {
           </span>
         </motion.div>
 
-        {/* Editorial Headline with Word-by-Word Reveal */}
-        <div style={{ overflow: "hidden", marginBottom: "1.25rem" }}>
+        {/* Editorial Headline matching Behance Reference */}
+        <div style={{ overflow: "hidden", marginBottom: "0.5rem" }}>
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7 }}
+            style={{
+              fontSize: "0.8125rem",
+              letterSpacing: "0.26em",
+              textTransform: "uppercase",
+              fontWeight: 600,
+              color: "var(--color-brass)",
+              marginBottom: "0.75rem",
+            }}
+          >
+            NEW ARRIVALS
+          </motion.div>
           <motion.h1
             initial={{ y: "100%" }}
             animate={{ y: "0%" }}
             transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
             style={{
-              fontSize: "clamp(2.75rem, 6.8vw, 5.5rem)",
-              lineHeight: 1.05,
+              fontSize: "clamp(3.5rem, 8.5vw, 6.75rem)",
+              lineHeight: 1.0,
               fontWeight: 300,
               color: "var(--color-text-main)",
-              letterSpacing: "-0.025em",
+              letterSpacing: "-0.035em",
             }}
           >
-            Quiet Spaces, <br />
-            <span style={{ fontStyle: "italic", fontWeight: 400 }}>Soft Minimalism.</span>
+            New <span style={{ fontStyle: "italic", fontWeight: 400 }}>Designs.</span>
           </motion.h1>
         </div>
 
@@ -176,12 +190,12 @@ export const Hero: React.FC = () => {
             fontSize: "clamp(1.0625rem, 2vw, 1.25rem)",
             color: "var(--color-text-secondary)",
             maxWidth: "720px",
-            margin: "0 auto 3rem",
+            margin: "1rem auto 3rem",
             lineHeight: 1.7,
             fontWeight: 300,
           }}
         >
-          Rooted in Danish architectural heritage. Honed natural travertine, sculpted bouclé seating,
+          Quiet spaces, soft minimalism. Honed natural travertine, sculpted bouclé seating,
           and ambient paper lanterns designed to elevate human contemplation.
         </motion.p>
 
