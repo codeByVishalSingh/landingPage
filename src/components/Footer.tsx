@@ -1,164 +1,102 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Link from "next/link";
-import { SHOWROOM_INFO, getWhatsAppEnquiryUrl } from "@/data/products";
+import { SHOWROOM_INFO } from "@/data/products";
 import { BrandLogo } from "@/components/BrandLogo";
 
 export const Footer: React.FC = () => {
-  const [email, setEmail] = useState("");
-  const [subscribed, setSubscribed] = useState(false);
-
-  const handleSubscribe = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (email.trim() && email.includes("@")) {
-      setSubscribed(true);
-      setEmail("");
-    }
-  };
-
   return (
     <footer id="footer" className="ft">
       <div className="ft-container">
-        {/* Top Tier: Brand Statement on Left + Luxury Newsletter on Right */}
-        <div className="ft-hero-tier">
-          <div className="ft-hero-brand">
-            <BrandLogo height={92} inverted={false} />
-            <p className="ft-hero-subtitle">
+        {/* Main Tier: Brand Column on Left + Navigation Columns Adjacent on Right */}
+        <div className="ft-main-tier">
+          {/* Left Side: Logo & Content */}
+          <div className="ft-brand-col">
+            <BrandLogo height={88} inverted={false} className="ft-brand-logo" />
+            <p className="ft-brand-desc">
               Casablanca Sofas · Kurnool&apos;s premier luxury furniture destination since 1998 with a 15,000+ sq. ft. showroom experience.
             </p>
           </div>
 
-          <div className="ft-hero-newsletter">
-            <span className="ft-eyebrow">✦ THE CASABLANCA CIRCLE</span>
-            <h4 className="ft-newsletter-title">Stay Connected With Curated Design</h4>
-            <p className="ft-newsletter-sub">
-              Receive private lookbooks, seasonal festive packages, and design consultation updates.
-            </p>
+          {/* Right Side: Collections, Showroom, Visit & Contact Adjacent */}
+          <div className="ft-nav-cols">
+            {/* Column 1: Collections */}
+            <div className="ft-col">
+              <h4 className="ft-col-title">
+                <span className="ft-title-accent" />
+                Collections
+              </h4>
+              <ul className="ft-list">
+                <li><Link href="/sofas-kurnool" className="ft-link">Sofas & Couches</Link></li>
+                <li><Link href="/recliners-kurnool" className="ft-link">Motorized Recliners</Link></li>
+                <li><Link href="/beds-cots-kurnool" className="ft-link">Teakwood Beds & Cots</Link></li>
+                <li><Link href="/dining-tables-kurnool" className="ft-link">Italian Marble Dining</Link></li>
+                <li><Link href="/mattresses-kurnool" className="ft-link">Orthopedic Mattresses</Link></li>
+              </ul>
+            </div>
 
-            {subscribed ? (
-              <div className="ft-thanks">
-                ✦ Thank you. Our showroom team has sent catalogue information to your inbox.
-              </div>
-            ) : (
-              <form className="ft-form" onSubmit={handleSubscribe}>
-                <label htmlFor="footer-email" className="ft-sr-only">
-                  Email address
-                </label>
-                <input
-                  id="footer-email"
-                  type="email"
-                  required
-                  autoComplete="email"
-                  placeholder="Enter your email address..."
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="ft-input"
-                />
-                <button type="submit" aria-label="Subscribe to Casablanca Circle" className="ft-submit">
-                  <span>Join</span>
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-                    <path d="M5 12h14M12 5l7 7-7 7" />
-                  </svg>
-                </button>
-              </form>
-            )}
-            <span className="ft-note">Direct Kurnool showroom notifications. No spam, only genuine updates.</span>
-          </div>
-        </div>
+            {/* Column 2: Showroom */}
+            <div className="ft-col">
+              <h4 className="ft-col-title">
+                <span className="ft-title-accent" />
+                Showroom
+              </h4>
+              <ul className="ft-list">
+                <li><Link href="/furniture-showroom-kurnool" className="ft-link">15,000 Sq. Ft. Gallery</Link></li>
+                <li><a href="#craftsmanship" className="ft-link">15-Year Teakwood Guarantee</a></li>
+                <li><Link href="/offers" className="ft-link">Festive Packages & Offers</Link></li>
+                <li><Link href="/furniture-showroom-kurnool" className="ft-link">Plan Showroom Visit</Link></li>
+                <li className="ft-plain-highlight">✦ Free White-Glove Setup across AP</li>
+              </ul>
+            </div>
 
-        {/* Middle Tier: 5 Balanced, Evenly Aligned Columns */}
-        <div className="ft-nav-tier">
-          {/* Column 1: Heritage & Assurance */}
-          <div className="ft-col">
-            <h4 className="ft-col-title">
-              <span className="ft-title-accent" />
-              Our Heritage
-            </h4>
-            <p className="ft-col-desc">
-              Curating heirloom teakwood, Italian marble, and motorized luxury seating in Kurnool for over 28 years.
-            </p>
-          </div>
-
-          {/* Column 2: Collections */}
-          <div className="ft-col">
-            <h4 className="ft-col-title">
-              <span className="ft-title-accent" />
-              Collections
-            </h4>
-            <ul className="ft-list">
-              <li><Link href="/sofas-kurnool" className="ft-link">Sofas & Couches</Link></li>
-              <li><Link href="/recliners-kurnool" className="ft-link">Motorized Recliners</Link></li>
-              <li><Link href="/beds-cots-kurnool" className="ft-link">Teakwood Beds & Cots</Link></li>
-              <li><Link href="/dining-tables-kurnool" className="ft-link">Italian Marble Dining</Link></li>
-              <li><Link href="/mattresses-kurnool" className="ft-link">Orthopedic Mattresses</Link></li>
-              <li><Link href="/curtains-blinds-kurnool" className="ft-link">Bespoke Curtains & Blinds</Link></li>
-            </ul>
-          </div>
-
-          {/* Column 3: Showroom Experience */}
-          <div className="ft-col">
-            <h4 className="ft-col-title">
-              <span className="ft-title-accent" />
-              Showroom
-            </h4>
-            <ul className="ft-list">
-              <li><Link href="/furniture-showroom-kurnool" className="ft-link">15,000 Sq. Ft. Gallery</Link></li>
-              <li><Link href="/offers" className="ft-link">Festive Packages & Offers</Link></li>
-              <li><a href="#craftsmanship" className="ft-link">15-Year Teakwood Guarantee</a></li>
-              <li><Link href="/furniture-showroom-kurnool" className="ft-link">Plan Showroom Visit</Link></li>
-              <li><a href="#reviews" className="ft-link">Customer Testimonials</a></li>
-              <li><Link href="/furniture" className="ft-link">Browse All Designs</Link></li>
-            </ul>
-          </div>
-
-          {/* Column 4: Regional Coverage */}
-          <div className="ft-col">
-            <h4 className="ft-col-title">
-              <span className="ft-title-accent" />
-              Delivery Areas
-            </h4>
-            <ul className="ft-list">
-              <li className="ft-plain">Kurnool Town & Bellary Bypass</li>
-              <li className="ft-plain">Nandyal & Allagadda Villas</li>
-              <li className="ft-plain">Dhone & Gooty Residences</li>
-              <li className="ft-plain">Adoni & Yemmiganur Deliveries</li>
-              <li className="ft-plain">Anantapur & Regional AP</li>
-              <li className="ft-plain-highlight">✦ Free White-Glove Setup</li>
-            </ul>
-          </div>
-
-          {/* Column 5: Location & Contact */}
-          <div className="ft-col ft-col-contact">
-            <h4 className="ft-col-title">
-              <span className="ft-title-accent" />
-              Visit & Contact
-            </h4>
-            <div className="ft-contact-box">
-              <div className="ft-contact-row">
-                <span className="ft-contact-icon">📍</span>
-                <div>
-                  <strong className="ft-contact-label">Showroom Address</strong>
-                  <p className="ft-contact-value">{SHOWROOM_INFO.address}</p>
-                  <p className="ft-contact-landmark">Landmark: {SHOWROOM_INFO.landmark}</p>
+            {/* Column 3: Visit & Contact */}
+            <div className="ft-col ft-col-contact">
+              <h4 className="ft-col-title">
+                <span className="ft-title-accent" />
+                Visit & Contact
+              </h4>
+              <div className="ft-contact-box">
+                <div className="ft-contact-row">
+                  <span className="ft-contact-icon" aria-hidden="true">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                      <circle cx="12" cy="10" r="3" />
+                    </svg>
+                  </span>
+                  <div>
+                    <strong className="ft-contact-label">Showroom Address</strong>
+                    <p className="ft-contact-value">{SHOWROOM_INFO.address}</p>
+                    <p className="ft-contact-landmark">Landmark: {SHOWROOM_INFO.landmark}</p>
+                  </div>
                 </div>
-              </div>
 
-              <div className="ft-contact-row">
-                <span className="ft-contact-icon">🕒</span>
-                <div>
-                  <strong className="ft-contact-label">Showroom Hours</strong>
-                  <p className="ft-contact-value">{SHOWROOM_INFO.timing}</p>
+                <div className="ft-contact-row">
+                  <span className="ft-contact-icon" aria-hidden="true">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="10" />
+                      <polyline points="12 6 12 12 16 14" />
+                    </svg>
+                  </span>
+                  <div>
+                    <strong className="ft-contact-label">Showroom Hours</strong>
+                    <p className="ft-contact-value">{SHOWROOM_INFO.timing}</p>
+                  </div>
                 </div>
-              </div>
 
-              <div className="ft-contact-row">
-                <span className="ft-contact-icon">📞</span>
-                <div>
-                  <strong className="ft-contact-label">Direct Phone</strong>
-                  <a href={`tel:${SHOWROOM_INFO.phone}`} className="ft-contact-link">
-                    {SHOWROOM_INFO.displayPhone}
-                  </a>
+                <div className="ft-contact-row">
+                  <span className="ft-contact-icon" aria-hidden="true">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                    </svg>
+                  </span>
+                  <div>
+                    <strong className="ft-contact-label">Direct Phone</strong>
+                    <a href={`tel:${SHOWROOM_INFO.phone}`} className="ft-contact-link">
+                      {SHOWROOM_INFO.displayPhone}
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
