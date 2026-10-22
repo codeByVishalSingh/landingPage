@@ -13,6 +13,7 @@ import { SearchModal } from "@/components/SearchModal";
 import { FloatingWhatsApp } from "@/components/FloatingWhatsApp";
 import { Toast } from "@/components/Toast";
 import { ProductCard3D } from "@/components/ProductCard3D";
+import { ProductGrid } from "@/components/ProductGrid";
 import { PRODUCTS, SHOWROOM_INFO, formatPriceWithCurrency, getProductPDPWhatsAppUrl } from "@/data/products";
 
 export interface CategoryTile {
@@ -269,23 +270,17 @@ export const CategoryLandingTemplate: React.FC<CategoryLandingProps> = ({
             </div>
 
             {/* Product Grid */}
-            <div className="full-bleed">
-            <div className="catalogue-3col-grid">
-              {categoryProducts.map((product) => (
-                <ProductCard3D
-                  key={product.id}
-                  product={product}
-                  currency={currency}
-                  isWishlisted={wishlistIds.includes(product.id)}
-                  onToggleWishlist={handleToggleWishlist}
-                  onQuickView={setQuickViewProduct}
-                  onAddToCart={() => {
-                    setQuickViewProduct(product);
-                  }}
-                />
-              ))}
-            </div>
-            </div>
+            <ProductGrid
+              products={categoryProducts}
+              currency={currency}
+              wishlistIds={wishlistIds}
+              onToggleWishlist={handleToggleWishlist}
+              onQuickView={setQuickViewProduct}
+              onAddToCart={(p, f) => {
+                setQuickViewProduct(p);
+              }}
+              showShopAll={false}
+            />
 
             {/* Local FAQs & Showroom Help for Kurnool Local SEO */}
             {seoFaqs && seoFaqs.length > 0 && (

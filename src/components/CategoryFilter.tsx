@@ -74,7 +74,6 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
             transition={{ duration: 0.5, delay: 0.05 * i, ease: [0.16, 1, 0.3, 1] }}
           >
             {tab.label}
-            <sup suppressHydrationWarning>{counts[tab.key] ?? 0}</sup>
             {isActive && <motion.span layoutId="cf-underline" className="cf-underline" />}
           </motion.button>
         );

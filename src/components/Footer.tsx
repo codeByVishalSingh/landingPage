@@ -5,40 +5,6 @@ import Link from "next/link";
 import { SHOWROOM_INFO, getWhatsAppEnquiryUrl } from "@/data/products";
 import { BrandLogo } from "@/components/BrandLogo";
 
-const columns: { title: string; links: { name: string; href?: string; internal?: boolean }[] }[] = [
-  {
-    title: "Furniture Categories",
-    links: [
-      { name: "Sofas & Couches", href: "/sofas-kurnool", internal: true },
-      { name: "Motorized Recliners", href: "/recliners-kurnool", internal: true },
-      { name: "Teakwood Beds & Cots", href: "/beds-cots-kurnool", internal: true },
-      { name: "Orthopedic Mattresses", href: "/mattresses-kurnool", internal: true },
-      { name: "Italian Marble Dining", href: "/dining-tables-kurnool", internal: true },
-      { name: "Bespoke Curtains & Blinds", href: "/curtains-blinds-kurnool", internal: true },
-    ],
-  },
-  {
-    title: "Kurnool Showroom",
-    links: [
-      { name: "15,000 Sq. Ft. Gallery Tour", href: "/furniture-showroom-kurnool" },
-      { name: "Festive Packages & Offers", href: "/offers" },
-      { name: "15-Year Teakwood Guarantee", href: "#craftsmanship" },
-      { name: "Plan Showroom Visit", href: "/furniture-showroom-kurnool" },
-      { name: "Customer Testimonials", href: "#reviews" },
-    ],
-  },
-  {
-    title: "Regional Coverage",
-    links: [
-      { name: "Kurnool Town & Bellary Bypass" },
-      { name: "Nandyal & Allagadda Villas" },
-      { name: "Dhone & Gooty Residences" },
-      { name: "Adoni & Yemmiganur Deliveries" },
-      { name: "Free White-Glove Setup" },
-    ],
-  },
-];
-
 export const Footer: React.FC = () => {
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
@@ -54,142 +20,178 @@ export const Footer: React.FC = () => {
   return (
     <footer id="footer" className="ft">
       <div className="ft-container">
-        <div className="ft-top">
-          {/* Brand, intro and newsletter */}
-          <div className="ft-brand">
-            <BrandLogo height={84} inverted={false} />
-            <span className="ft-eyebrow">CASABLANCA SOFAS · LUXURY LIVING</span>
-            <h3 className="ft-tagline">
-              Comfort. Quality. <span>Timeless Living.</span>
-            </h3>
-            <p className="ft-text">
-              Visit our 15,000+ sq. ft. showroom on Bellary Road or connect on WhatsApp to receive catalogue updates,
-              custom dimensions, and seasonal promotion announcements.
+        {/* Top Tier: Brand Statement on Left + Luxury Newsletter on Right */}
+        <div className="ft-hero-tier">
+          <div className="ft-hero-brand">
+            <BrandLogo height={92} inverted={false} />
+            <p className="ft-hero-subtitle">
+              Casablanca Sofas · Kurnool&apos;s premier luxury furniture destination since 1998 with a 15,000+ sq. ft. showroom experience.
             </p>
-
-            <div className="ft-newsletter">
-              <span className="ft-eyebrow">STAY CONNECTED</span>
-              <h4 className="ft-newsletter-title">Join The Casablanca Circle</h4>
-              <p className="ft-text">
-                Receive early catalogue releases, showroom festive packages, and design consultation updates.
-              </p>
-
-              {subscribed ? (
-                <div className="ft-thanks">
-                  ✦ Thank you. Our Kurnool showroom team has sent catalogue information to your inbox.
-                </div>
-              ) : (
-                <form className="ft-form" onSubmit={handleSubscribe}>
-                  <label htmlFor="footer-email" className="ft-sr-only">
-                    Email address
-                  </label>
-                  <input
-                    id="footer-email"
-                    type="email"
-                    required
-                    autoComplete="email"
-                    placeholder="Enter your email for catalogue updates..."
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="ft-input"
-                  />
-                  <button type="submit" aria-label="Submit newsletter subscription" className="ft-submit">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M5 12h14M12 5l7 7-7 7" />
-                    </svg>
-                  </button>
-                </form>
-              )}
-              <span className="ft-note">Direct showroom notifications. No spam, only authentic furniture updates.</span>
-            </div>
           </div>
 
-          {/* Link columns */}
-          <nav aria-label="Footer" className="ft-nav">
-            {columns.map((col) => (
-              <div key={col.title}>
-                <h4 className="ft-col-title">{col.title}</h4>
-                <ul className="ft-list">
-                  {col.links.map((l) => (
-                    <li key={l.name}>
-                      {l.href ? (
-                        l.internal ? (
-                          <Link href={l.href} className="ft-link">
-                            {l.name}
-                          </Link>
-                        ) : (
-                          <a href={l.href} className="ft-link">
-                            {l.name}
-                          </a>
-                        )
-                      ) : (
-                        <span className="ft-plain">{l.name}</span>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+          <div className="ft-hero-newsletter">
+            <span className="ft-eyebrow">✦ THE CASABLANCA CIRCLE</span>
+            <h4 className="ft-newsletter-title">Stay Connected With Curated Design</h4>
+            <p className="ft-newsletter-sub">
+              Receive private lookbooks, seasonal festive packages, and design consultation updates.
+            </p>
 
-            <div>
-              <h4 className="ft-col-title">Location & Contact</h4>
-              <ul className="ft-list">
-                <li className="ft-plain">
-                  <strong>Showroom Address</strong>
-                  {SHOWROOM_INFO.address}
-                </li>
-                <li className="ft-plain">
-                  <strong>Landmark</strong>
-                  {SHOWROOM_INFO.landmark}
-                </li>
-                <li className="ft-plain">
-                  <strong>Timings & Contact</strong>
-                  {SHOWROOM_INFO.timing}
-                  <a href={`tel:${SHOWROOM_INFO.phone}`} className="ft-link ft-phone">
-                    📞 {SHOWROOM_INFO.displayPhone}
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </nav>
+            {subscribed ? (
+              <div className="ft-thanks">
+                ✦ Thank you. Our showroom team has sent catalogue information to your inbox.
+              </div>
+            ) : (
+              <form className="ft-form" onSubmit={handleSubscribe}>
+                <label htmlFor="footer-email" className="ft-sr-only">
+                  Email address
+                </label>
+                <input
+                  id="footer-email"
+                  type="email"
+                  required
+                  autoComplete="email"
+                  placeholder="Enter your email address..."
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="ft-input"
+                />
+                <button type="submit" aria-label="Subscribe to Casablanca Circle" className="ft-submit">
+                  <span>Join</span>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </form>
+            )}
+            <span className="ft-note">Direct Kurnool showroom notifications. No spam, only genuine updates.</span>
+          </div>
         </div>
 
-        {/* Bottom bar */}
+        {/* Middle Tier: 5 Balanced, Evenly Aligned Columns */}
+        <div className="ft-nav-tier">
+          {/* Column 1: Heritage & Assurance */}
+          <div className="ft-col">
+            <h4 className="ft-col-title">
+              <span className="ft-title-accent" />
+              Our Heritage
+            </h4>
+            <p className="ft-col-desc">
+              Curating heirloom teakwood, Italian marble, and motorized luxury seating in Kurnool for over 28 years.
+            </p>
+          </div>
+
+          {/* Column 2: Collections */}
+          <div className="ft-col">
+            <h4 className="ft-col-title">
+              <span className="ft-title-accent" />
+              Collections
+            </h4>
+            <ul className="ft-list">
+              <li><Link href="/sofas-kurnool" className="ft-link">Sofas & Couches</Link></li>
+              <li><Link href="/recliners-kurnool" className="ft-link">Motorized Recliners</Link></li>
+              <li><Link href="/beds-cots-kurnool" className="ft-link">Teakwood Beds & Cots</Link></li>
+              <li><Link href="/dining-tables-kurnool" className="ft-link">Italian Marble Dining</Link></li>
+              <li><Link href="/mattresses-kurnool" className="ft-link">Orthopedic Mattresses</Link></li>
+              <li><Link href="/curtains-blinds-kurnool" className="ft-link">Bespoke Curtains & Blinds</Link></li>
+            </ul>
+          </div>
+
+          {/* Column 3: Showroom Experience */}
+          <div className="ft-col">
+            <h4 className="ft-col-title">
+              <span className="ft-title-accent" />
+              Showroom
+            </h4>
+            <ul className="ft-list">
+              <li><Link href="/furniture-showroom-kurnool" className="ft-link">15,000 Sq. Ft. Gallery</Link></li>
+              <li><Link href="/offers" className="ft-link">Festive Packages & Offers</Link></li>
+              <li><a href="#craftsmanship" className="ft-link">15-Year Teakwood Guarantee</a></li>
+              <li><Link href="/furniture-showroom-kurnool" className="ft-link">Plan Showroom Visit</Link></li>
+              <li><a href="#reviews" className="ft-link">Customer Testimonials</a></li>
+              <li><Link href="/furniture" className="ft-link">Browse All Designs</Link></li>
+            </ul>
+          </div>
+
+          {/* Column 4: Regional Coverage */}
+          <div className="ft-col">
+            <h4 className="ft-col-title">
+              <span className="ft-title-accent" />
+              Delivery Areas
+            </h4>
+            <ul className="ft-list">
+              <li className="ft-plain">Kurnool Town & Bellary Bypass</li>
+              <li className="ft-plain">Nandyal & Allagadda Villas</li>
+              <li className="ft-plain">Dhone & Gooty Residences</li>
+              <li className="ft-plain">Adoni & Yemmiganur Deliveries</li>
+              <li className="ft-plain">Anantapur & Regional AP</li>
+              <li className="ft-plain-highlight">✦ Free White-Glove Setup</li>
+            </ul>
+          </div>
+
+          {/* Column 5: Location & Contact */}
+          <div className="ft-col ft-col-contact">
+            <h4 className="ft-col-title">
+              <span className="ft-title-accent" />
+              Visit & Contact
+            </h4>
+            <div className="ft-contact-box">
+              <div className="ft-contact-row">
+                <span className="ft-contact-icon">📍</span>
+                <div>
+                  <strong className="ft-contact-label">Showroom Address</strong>
+                  <p className="ft-contact-value">{SHOWROOM_INFO.address}</p>
+                  <p className="ft-contact-landmark">Landmark: {SHOWROOM_INFO.landmark}</p>
+                </div>
+              </div>
+
+              <div className="ft-contact-row">
+                <span className="ft-contact-icon">🕒</span>
+                <div>
+                  <strong className="ft-contact-label">Showroom Hours</strong>
+                  <p className="ft-contact-value">{SHOWROOM_INFO.timing}</p>
+                </div>
+              </div>
+
+              <div className="ft-contact-row">
+                <span className="ft-contact-icon">📞</span>
+                <div>
+                  <strong className="ft-contact-label">Direct Phone</strong>
+                  <a href={`tel:${SHOWROOM_INFO.phone}`} className="ft-contact-link">
+                    {SHOWROOM_INFO.displayPhone}
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Tier: Sleek Copyright, Live Status & Legal Links */}
         <div className="ft-bottom">
           <div className="ft-bottom-left">
             <span>© 2026 Casablanca Sofas. All rights reserved.</span>
-            <span>Kurnool, AP</span>
-            <a
-              href={getWhatsAppEnquiryUrl("Footer Inquiry")}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="ft-link ft-live"
-            >
-              <span className="ft-dot" aria-hidden="true">
+            <span className="ft-sep">•</span>
+            <span>Bellary Road, Kurnool, AP</span>
+            <span className="ft-sep">•</span>
+            <span className="ft-live-indicator">
+              <span className="ft-dot">
                 <span className="ft-dot__halo" />
                 <span className="ft-dot__core" />
               </span>
-              WhatsApp Assistance →
-            </a>
+              Showroom Open Today
+            </span>
           </div>
           <div className="ft-bottom-links">
-            <Link href="/furniture" className="ft-link">
-              Shop
-            </Link>
-            <Link href="/furniture-showroom-kurnool" className="ft-link">
-              Showroom
-            </Link>
-            <a href={`tel:${SHOWROOM_INFO.phone}`} className="ft-link">
-              Contact
-            </a>
+            <Link href="/furniture" className="ft-link">Catalogue</Link>
+            <Link href="/furniture-showroom-kurnool" className="ft-link">Showroom</Link>
+            <a href={`tel:${SHOWROOM_INFO.phone}`} className="ft-link">Contact</a>
             <span className="ft-muted">Privacy</span>
             <span className="ft-muted">Terms</span>
           </div>
         </div>
       </div>
 
-      {/* Oversized faded wordmark */}
-      <div className="ft-container ft-wordmark-wrap" aria-hidden="true">
+      {/* Ambient background watermark - positioned cleanly in background */}
+      <div className="ft-wordmark-wrap" aria-hidden="true">
         <p className="ft-wordmark">Casablanca</p>
       </div>
     </footer>

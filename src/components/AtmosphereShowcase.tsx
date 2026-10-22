@@ -261,14 +261,6 @@ const AtmosphereBanner: React.FC<{
         <div className="atm-shade" aria-hidden="true" />
 
         <div className={`atm-title-block ${isLeft ? "is-left" : "is-right"}`}>
-          <motion.span
-            className="atm-index"
-            initial={false}
-            animate={{ opacity: revealed ? 0.9 : 0 }}
-            transition={{ duration: 0.6, delay: revealed ? 0.1 : 0 }}
-          >
-            {data.index}
-          </motion.span>
           <SplitTitle text={data.title} show={revealed} />
         </div>
 

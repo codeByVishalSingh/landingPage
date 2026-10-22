@@ -76,7 +76,7 @@ const CategoryCard: React.FC<{
           </motion.span>
         </motion.span>
         <span className="cat-card__count">
-          {item.number} · {item.tag}
+          {item.tag}
         </span>
       </span>
 
