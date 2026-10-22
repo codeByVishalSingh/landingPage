@@ -43,10 +43,6 @@ const AudoCardItem: React.FC<{
       style={{
         position: "relative",
         borderRight: showDivider ? "1px solid #ECEAE5" : "none",
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between",
         background: "#FFFFFF",
       }}
       className="audo-card-col"
@@ -57,7 +53,6 @@ const AudoCardItem: React.FC<{
         onClick={() => onQuickView(product)}
         style={{
           width: "100%",
-          height: "100%",
           display: "flex",
           flexDirection: "column",
           cursor: "pointer",
@@ -68,8 +63,9 @@ const AudoCardItem: React.FC<{
           style={{
             position: "relative",
             width: "100%",
+            aspectRatio: "1 / 1",
             overflow: "hidden",
-            backgroundColor: "#FFFFFF",
+            backgroundColor: "#F7F5F0",
           }}
         >
           {/* Main Image with Smooth Micro-zoom on Hover */}
@@ -77,6 +73,7 @@ const AudoCardItem: React.FC<{
             style={{
               position: "relative",
               width: "100%",
+              height: "100%",
               transform: isHovered ? "scale(1.03)" : "scale(1)",
               transition: "transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)",
             }}
@@ -84,10 +81,9 @@ const AudoCardItem: React.FC<{
             <Image
               src={selectedFinish.image || (isHovered && product.hoverImage ? product.hoverImage : product.primaryImage)}
               alt={product.name}
-              width={0}
-              height={0}
+              fill
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              style={{ width: "100%", height: "auto", display: "block" }}
+              style={{ objectFit: "cover" }}
               priority
             />
           </div>
@@ -138,13 +134,11 @@ const AudoCardItem: React.FC<{
         {/* Card Details & Actions Area */}
         <div
           style={{
-            padding: "1.5rem 1.25rem 2rem",
+            padding: "18px 12px 20px",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
             textAlign: "center",
-            flex: 1,
-            justifyContent: "space-between",
             width: "100%",
           }}
         >
@@ -153,8 +147,9 @@ const AudoCardItem: React.FC<{
             style={{
               display: "flex",
               alignItems: "center",
-              gap: "0.45rem",
-              marginBottom: "0.85rem",
+              gap: "5px",
+              height: "12px",
+              marginBottom: "8px",
             }}
             onClick={(e) => e.stopPropagation()}
           >
@@ -165,14 +160,15 @@ const AudoCardItem: React.FC<{
                   key={f.id}
                   onClick={() => setSelectedFinish(f)}
                   aria-label={`Select finish ${f.name}`}
+                  title={f.name}
                   style={{
-                    width: "12px",
-                    height: "12px",
+                    width: "8px",
+                    height: "8px",
                     borderRadius: "50%",
                     backgroundColor: f.colorHex || "#C8B89A",
-                    border: isSelected ? "2px solid #102B46" : "1px solid rgba(0,0,0,0.15)",
-                    outline: isSelected ? "2px solid var(--color-gold)" : "none",
-                    outlineOffset: "2px",
+                    border: "none",
+                    outline: isSelected ? "1.5px solid #111111" : "none",
+                    outlineOffset: "1.5px",
                     cursor: "pointer",
                     padding: 0,
                     transition: "all 0.15s ease",
@@ -181,7 +177,7 @@ const AudoCardItem: React.FC<{
               );
             })}
             {product.finishes.length > 3 && (
-              <span style={{ fontSize: "0.6875rem", color: "#848B94", fontWeight: 500, marginLeft: "0.2rem" }}>
+              <span style={{ fontSize: "9px", color: "#111111", lineHeight: 1, marginLeft: "1px" }}>
                 +{product.finishes.length - 3}
               </span>
             )}
@@ -190,15 +186,19 @@ const AudoCardItem: React.FC<{
           {/* Title in tracked uppercase */}
           <h3
             style={{
+              margin: "0 0 5px",
+              maxWidth: "100%",
               fontFamily: "var(--font-sans)",
-              fontSize: "0.8125rem",
-              fontWeight: 700,
-              letterSpacing: "0.14em",
+              fontSize: "10px",
+              lineHeight: 1.25,
+              fontWeight: 400,
+              letterSpacing: "0.08em",
               textTransform: "uppercase",
-              color: "#102B46",
+              color: "#111111",
               textAlign: "center",
-              marginBottom: "0.4rem",
-              lineHeight: 1.35,
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
             }}
           >
             {product.name}
@@ -208,47 +208,57 @@ const AudoCardItem: React.FC<{
           <div
             suppressHydrationWarning
             style={{
-              fontSize: "0.875rem",
-              color: "#575D65",
-              fontWeight: 400,
+              fontFamily: "var(--font-sans)",
+              fontSize: "10px",
+              lineHeight: 1.25,
               letterSpacing: "0.04em",
+              color: "#9A9A9A",
               textAlign: "center",
-              marginBottom: "1.1rem",
+              marginBottom: "8px",
             }}
           >
             {formattedPrice}
           </div>
 
-          {/* Instant WhatsApp Action Link */}
+          {/* Instant WhatsApp Action Link - Both Icon and Text */}
           <a
             href={getWhatsAppEnquiryUrl(product.name, undefined, selectedFinish.name, formattedPrice)}
             target="_blank"
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}
+            aria-label={`Enquire about ${product.name} on WhatsApp`}
+            title="Enquire on WhatsApp"
             style={{
-              fontSize: "0.6875rem",
-              letterSpacing: "0.14em",
-              textTransform: "uppercase",
-              fontWeight: 700,
-              color: "var(--color-whatsapp)",
               display: "inline-flex",
               alignItems: "center",
+              justifyContent: "center",
               gap: "0.4rem",
-              textDecoration: "none",
-              padding: "0.45rem 1rem",
-              borderRadius: "20px",
+              padding: "0.35rem 0.85rem",
+              borderRadius: "999px",
               backgroundColor: "rgba(24, 134, 75, 0.08)",
-              transition: "all 0.2s ease",
+              color: "#18864B",
+              fontSize: "0.6875rem",
+              fontWeight: 600,
+              letterSpacing: "0.06em",
+              textTransform: "uppercase",
+              textDecoration: "none",
+              transition: "all 0.2s cubic-bezier(0.16, 1, 0.3, 1)",
+              cursor: "pointer",
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.backgroundColor = "var(--color-whatsapp)";
               e.currentTarget.style.color = "#FFFFFF";
+              e.currentTarget.style.transform = "translateY(-1px)";
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.backgroundColor = "rgba(24, 134, 75, 0.08)";
-              e.currentTarget.style.color = "var(--color-whatsapp)";
+              e.currentTarget.style.color = "#18864B";
+              e.currentTarget.style.transform = "translateY(0)";
             }}
           >
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+            </svg>
             <span>Enquire on WhatsApp</span>
           </a>
         </div>
@@ -451,7 +461,7 @@ export const AudoProductStage: React.FC<AudoProductStageProps> = ({
             initial={false}
             animate={{ x: `-${(clamped * 100) / tabProducts.length}%` }}
             transition={{ duration: 0.75, ease: [0.16, 1, 0.3, 1] }}
-            style={{ display: "flex", width: `${(tabProducts.length * 100) / VISIBLE}%`, alignItems: "stretch" }}
+            style={{ display: "flex", width: `${(tabProducts.length * 100) / VISIBLE}%`, alignItems: "flex-start" }}
           >
             {tabProducts.map((product, idx) => (
               <div key={product.id} style={{ width: `${100 / tabProducts.length}%`, display: "flex", flexDirection: "column" }}>
