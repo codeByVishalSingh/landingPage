@@ -149,6 +149,61 @@ export const Header: React.FC<HeaderProps> = ({
               </button>
 
 
+              {/* Mobile Quick Action Buttons (Search & Wishlist Icons) */}
+              <button
+                type="button"
+                onClick={onOpenSearch}
+                aria-label="Search collection"
+                className="mobile-action-icon"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+              </button>
+
+              <button
+                type="button"
+                onClick={onOpenWishlist}
+                aria-label="Saved favourites and shortlist"
+                className="mobile-action-icon"
+                style={{ position: "relative" }}
+              >
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill={wishlistCount > 0 ? "var(--color-gold)" : "none"}
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                </svg>
+                {wishlistCount > 0 && (
+                  <span
+                    suppressHydrationWarning
+                    style={{
+                      position: "absolute",
+                      top: "-4px",
+                      right: "-4px",
+                      background: "var(--color-gold)",
+                      color: "#102B46",
+                      fontSize: "0.5625rem",
+                      fontWeight: 700,
+                      width: "15px",
+                      height: "15px",
+                      borderRadius: "50%",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      lineHeight: 1,
+                    }}
+                  >
+                    {wishlistCount}
+                  </span>
+                )}
+              </button>
+
               <button
                 id="mobile-nav-toggle"
                 type="button"
@@ -180,17 +235,81 @@ export const Header: React.FC<HeaderProps> = ({
           <div
             id="mobile-navigation-drawer"
             style={{
-              padding: "1.75rem 2rem",
+              padding: "1.5rem 1.5rem 2rem",
               borderRadius: "0 0 16px 16px",
               background: "rgba(16, 43, 70, 0.98)",
               backdropFilter: "blur(20px)",
+              WebkitBackdropFilter: "blur(20px)",
               borderTop: "1px solid rgba(255, 255, 255, 0.08)",
               display: "flex",
               flexDirection: "column",
               gap: "1.25rem",
+              maxHeight: "calc(100vh - 76px)",
+              overflowY: "auto",
               boxShadow: "0 20px 40px rgba(0, 0, 0, 0.4)",
             }}
           >
+            {/* Quick Search & Shortlist in Drawer */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem", paddingBottom: "0.5rem" }}>
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  onOpenSearch();
+                }}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "0.5rem",
+                  padding: "0.65rem 0.75rem",
+                  borderRadius: "6px",
+                  background: "rgba(255, 255, 255, 0.08)",
+                  border: "1px solid rgba(255, 255, 255, 0.12)",
+                  color: "#FAF8F5",
+                  fontFamily: "var(--font-sans)",
+                  fontSize: "0.75rem",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                }}
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <span>Search</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  onOpenWishlist();
+                }}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "0.5rem",
+                  padding: "0.65rem 0.75rem",
+                  borderRadius: "6px",
+                  background: "rgba(255, 255, 255, 0.08)",
+                  border: "1px solid rgba(255, 255, 255, 0.12)",
+                  color: "#FAF8F5",
+                  fontFamily: "var(--font-sans)",
+                  fontSize: "0.75rem",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                }}
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                </svg>
+                <span>Shortlist ({wishlistCount})</span>
+              </button>
+            </div>
+
+            {/* Main Links */}
             <div style={{ display: "flex", flexDirection: "column", gap: "0.85rem" }}>
               <Link
                 href="/"
@@ -218,7 +337,7 @@ export const Header: React.FC<HeaderProps> = ({
                   borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
                 }}
               >
-                Shop
+                Shop All Catalogue
               </Link>
               <Link
                 href="/#collection"
@@ -246,7 +365,7 @@ export const Header: React.FC<HeaderProps> = ({
                   borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
                 }}
               >
-                Our Showroom
+                Our Showroom (Bellary Road)
               </Link>
               <Link
                 href="/offers"
@@ -260,7 +379,7 @@ export const Header: React.FC<HeaderProps> = ({
                   borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
                 }}
               >
-                Offers
+                Showroom Offers & Festive Deals
               </Link>
               <button
                 onClick={() => {
@@ -280,8 +399,35 @@ export const Header: React.FC<HeaderProps> = ({
                   cursor: "pointer",
                 }}
               >
-                Contact
+                Contact & Timings
               </button>
+            </div>
+
+            {/* Category Quick Links Grid */}
+            <div style={{ paddingTop: "0.25rem" }}>
+              <span style={{ fontSize: "0.625rem", letterSpacing: "0.18em", color: "var(--color-gold)", fontWeight: 700, textTransform: "uppercase", display: "block", marginBottom: "0.65rem" }}>
+                BROWSE CATEGORIES
+              </span>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem" }}>
+                {shopCategories.slice(0, 6).map((cat, i) => (
+                  <Link
+                    key={i}
+                    href={cat.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    style={{
+                      padding: "0.45rem 0.65rem",
+                      borderRadius: "4px",
+                      background: "rgba(255, 255, 255, 0.04)",
+                      color: "#FAF8F5",
+                      textDecoration: "none",
+                      fontSize: "0.75rem",
+                      fontFamily: "var(--font-sans)",
+                    }}
+                  >
+                    {cat.label}
+                  </Link>
+                ))}
+              </div>
             </div>
 
             <div style={{ paddingTop: "0.5rem", display: "flex", flexDirection: "column", gap: "0.75rem" }}>
@@ -290,7 +436,7 @@ export const Header: React.FC<HeaderProps> = ({
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn-whatsapp"
-                style={{ textAlign: "center", width: "100%", justifyContent: "center" }}
+                style={{ textAlign: "center", width: "100%", justifyContent: "center", padding: "0.85rem 1rem", fontSize: "0.8125rem" }}
               >
                 Chat on WhatsApp (+91 98490 12345)
               </a>
@@ -304,6 +450,7 @@ export const Header: React.FC<HeaderProps> = ({
                   fontSize: "0.75rem",
                   borderColor: "rgba(255,255,255,0.3)",
                   color: "#FAF8F5",
+                  padding: "0.75rem 1rem",
                 }}
               >
                 Call Bellary Road Showroom

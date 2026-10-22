@@ -19,7 +19,7 @@ interface LookbookHotspotProps {
 const EASE = [0.16, 1, 0.3, 1] as [number, number, number, number];
 
 // Slide geometry (percent of the stage) for the centre slide and its neighbours.
-const SLOT = {
+const SLOT_DESKTOP = {
   center: { left: "23%", width: "54%", top: "19%", height: "62%", opacity: 1 },
   prev: { left: "0%", width: "17%", top: "0%", height: "100%", opacity: 1 },
   next: { left: "83%", width: "17%", top: "0%", height: "100%", opacity: 1 },
@@ -27,12 +27,33 @@ const SLOT = {
   farNext: { left: "103%", width: "17%", top: "0%", height: "100%", opacity: 0 },
 };
 
+const SLOT_MOBILE = {
+  center: { left: "6%", width: "88%", top: "3%", height: "94%", opacity: 1 },
+  prev: { left: "-82%", width: "84%", top: "3%", height: "94%", opacity: 0.35 },
+  next: { left: "98%", width: "84%", top: "3%", height: "94%", opacity: 0.35 },
+  farPrev: { left: "-160%", width: "84%", top: "3%", height: "94%", opacity: 0 },
+  farNext: { left: "180%", width: "84%", top: "3%", height: "94%", opacity: 0 },
+};
+
+function useMediaQuery(query: string): boolean {
+  const [matches, setMatches] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia(query);
+    const update = () => setMatches(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, [query]);
+  return matches;
+}
+
 export const LookbookHotspot: React.FC<LookbookHotspotProps> = ({ currency, onQuickView }) => {
   const rooms = LOOKBOOK_ROOMS;
   const total = rooms.length;
   const [active, setActive] = useState(0);
   const [openHotspot, setOpenHotspot] = useState<string | null>(null);
   const [hovering, setHovering] = useState(false);
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
   const sectionRef = useRef<HTMLElement>(null);
   const drag = useRef({ down: false, startX: 0, moved: false });
@@ -58,10 +79,11 @@ export const LookbookHotspot: React.FC<LookbookHotspotProps> = ({ currency, onQu
   };
 
   const slotFor = (rel: number) => {
-    if (rel === 0) return SLOT.center;
-    if (rel === -1) return SLOT.prev;
-    if (rel === 1) return SLOT.next;
-    return rel < 0 ? SLOT.farPrev : SLOT.farNext;
+    const slot = isMobile ? SLOT_MOBILE : SLOT_DESKTOP;
+    if (rel === 0) return slot.center;
+    if (rel === -1) return slot.prev;
+    if (rel === 1) return slot.next;
+    return rel < 0 ? slot.farPrev : slot.farNext;
   };
 
   const onPointerMove = (e: React.PointerEvent) => {

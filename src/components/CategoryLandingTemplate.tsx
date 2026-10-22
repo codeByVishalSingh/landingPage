@@ -215,21 +215,8 @@ export const CategoryLandingTemplate: React.FC<CategoryLandingProps> = ({
         <section style={{ padding: "4rem 0 6rem" }}>
           <div className="container">
             {/* Filter Bar */}
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                flexWrap: "wrap",
-                gap: "1rem",
-                padding: "1.25rem 1.5rem",
-                backgroundColor: "#FFFFFF",
-                borderRadius: "6px",
-                border: "1px solid rgba(16, 43, 70, 0.08)",
-                marginBottom: "2.5rem",
-              }}
-            >
-              <div style={{ display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap" }}>
+            <div className="cat-filter-bar">
+              <div className="cat-filter-controls">
                 <span style={{ fontSize: "0.75rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-navy)", fontWeight: 700 }}>
                   FILTERS:
                 </span>
@@ -303,9 +290,9 @@ export const CategoryLandingTemplate: React.FC<CategoryLandingProps> = ({
             {/* Local FAQs & Showroom Help for Kurnool Local SEO */}
             {seoFaqs && seoFaqs.length > 0 && (
               <div
+                className="cat-faq-box"
                 style={{
-                  marginTop: "5rem",
-                  padding: "3rem",
+                  marginTop: "4rem",
                   backgroundColor: "#FFFFFF",
                   borderRadius: "8px",
                   border: "1px solid rgba(16, 43, 70, 0.08)",

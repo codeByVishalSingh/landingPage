@@ -137,6 +137,7 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
         >
           {/* Main Visual */}
           <div
+            className="modal-gallery-main"
             style={{
               position: "relative",
               flex: 1,
@@ -246,6 +247,7 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
 
         {/* RIGHT COLUMN: Product Details & WhatsApp Configuration Form */}
         <div
+          className="modal-details-col"
           style={{
             padding: "2.25rem",
             display: "flex",

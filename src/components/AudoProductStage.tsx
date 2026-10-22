@@ -401,33 +401,13 @@ export const AudoProductStage: React.FC<AudoProductStageProps> = ({
     <section id="audo-product-stage" style={{ padding: 0, backgroundColor: "var(--color-canvas)" }}>
       <div className="audo-stage-container" style={{ background: "#FFFFFF", overflow: "hidden" }}>
         {/* Header Row: Tabs on Left + Carousel Arrows on Right */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            borderBottom: "1px solid #ECEAE5",
-            padding: "7rem 2rem 1.5rem",
-            flexWrap: "wrap",
-            gap: "1rem",
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: "2rem" }}>
+        <div className="audo-header-row">
+          <div className="audo-header-tabs">
             {tabs.map((t) => (
               <button
                 key={t.key}
                 onClick={() => selectTab(t.key)}
-                style={{
-                  background: "transparent",
-                  border: "none",
-                  cursor: "pointer",
-                  fontFamily: "var(--font-sans)",
-                  fontSize: "1.25rem",
-                  fontWeight: activeTab === t.key ? 700 : 400,
-                  color: activeTab === t.key ? "#111111" : "#9A9A9A",
-                  padding: 0,
-                  transition: "color 0.2s ease",
-                }}
+                className={`audo-tab-btn ${activeTab === t.key ? "is-active" : ""}`}
               >
                 {t.label}
               </button>

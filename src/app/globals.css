@@ -584,6 +584,22 @@ h1, h2, h3, h4, .font-serif {
   background: var(--color-whatsapp-hover);
 }
 
+.mobile-action-icon {
+  display: none;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  padding: 0.4rem;
+  color: #FAF8F5;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+}
+
+.mobile-action-icon:hover {
+  color: var(--color-gold);
+}
+
 .mobile-hamburger {
   display: none;
   background: transparent;
@@ -625,8 +641,8 @@ h1, h2, h3, h4, .font-serif {
   .header-inner {
     display: flex;
     justify-content: space-between;
-    padding: 0 1.1rem;
-    min-height: 60px;
+    padding: 0 1rem;
+    min-height: 58px;
   }
   .nav-left,
   .nav-right,
@@ -637,16 +653,38 @@ h1, h2, h3, h4, .font-serif {
   .nav-right-group {
     gap: 0;
   }
+  .header-actions {
+    gap: 0.65rem;
+  }
   .header-brand-wrap {
     order: -1;
     padding: 0;
   }
   .header-brand-wrap .brand-logo-container {
-    --brand-logo-height: 48px !important;
-    --brand-logo-width: 97px !important;
+    --brand-logo-height: 46px !important;
+    --brand-logo-width: 93px !important;
+  }
+  .mobile-action-icon {
+    display: inline-flex;
   }
   .mobile-hamburger {
     display: flex;
+  }
+}
+
+@media (max-width: 360px) {
+  .header-inner {
+    padding: 0 0.65rem;
+  }
+  .header-actions {
+    gap: 0.35rem;
+  }
+  .mobile-action-icon {
+    padding: 0.25rem;
+  }
+  .header-brand-wrap .brand-logo-container {
+    --brand-logo-height: 40px !important;
+    --brand-logo-width: 81px !important;
   }
 }
 
@@ -1357,7 +1395,7 @@ h1, h2, h3, h4, .font-serif {
   margin: 0 0 -0.22em;
   text-align: center;
   font-family: var(--font-serif);
-  font-size: clamp(3.5rem, 17vw, 20rem);
+  font-size: clamp(2.25rem, 14vw, 20rem);
   font-weight: 600;
   line-height: 1;
   letter-spacing: -0.04em;
@@ -1383,12 +1421,22 @@ h1, h2, h3, h4, .font-serif {
   .ft-bottom { flex-direction: column-reverse; align-items: flex-start; }
 }
 
-/* QuickViewModal (moved from styled-jsx) */
-
+/* QuickViewModal Responsive Styles */
 @media (max-width: 860px) {
   .modal-grid {
     grid-template-columns: 1fr !important;
-    max-height: 90vh !important;
+    max-height: 88vh !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+  .modal-gallery-main {
+    min-height: 220px !important;
+    max-height: 270px !important;
+  }
+  .modal-details-col {
+    padding: 1.5rem 1.25rem 2rem !important;
+    max-height: none !important;
+    overflow-y: visible !important;
   }
 }
 
@@ -2364,3 +2412,235 @@ h1, h2, h3, h4, .font-serif {
   transition: opacity 0.3s ease;
 }
 .cf-bar.is-stuck::before { opacity: 1; }
+
+/* ==========================================================================
+   Comprehensive Mobile Responsiveness System (All Pages & Components)
+   ========================================================================== */
+
+/* 1. Global Viewport & Horizontal Overflow Prevention */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* 2. Audo Product Stage Header & Carousel Tabs */
+.audo-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #ECEAE5;
+  padding: clamp(3rem, 6vw, 6.5rem) 2rem 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.audo-header-tabs {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.audo-header-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.audo-tab-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  font-size: 1.25rem;
+  font-weight: 400;
+  color: #9A9A9A;
+  padding: 0.25rem 0;
+  white-space: nowrap;
+  transition: color 0.2s ease;
+}
+
+.audo-tab-btn.is-active {
+  font-weight: 700;
+  color: #111111;
+}
+
+@media (max-width: 640px) {
+  .audo-header-row {
+    padding: 2.75rem 1.25rem 1.25rem;
+  }
+  .audo-header-tabs {
+    gap: 1.2rem;
+  }
+  .audo-tab-btn {
+    font-size: 1rem;
+  }
+}
+
+/* 3. Category Banners (Shop By Category) Mobile Stacking */
+@media (max-width: 540px) {
+  .cat-grid {
+    grid-template-columns: 1fr !important;
+    gap: 2.25rem !important;
+  }
+  .cat-tile {
+    width: 100%;
+  }
+  .cat-card {
+    aspect-ratio: 16 / 10 !important;
+  }
+  .cat-label {
+    width: 100%;
+    justify-content: center;
+    padding: 0.85rem 1rem;
+    font-size: 0.8125rem;
+  }
+}
+
+/* 4. Lookbook Hotspot Mobile Improvements */
+@media (max-width: 768px) {
+  .insp-popover {
+    width: min(250px, calc(100vw - 32px)) !important;
+    margin-left: 0 !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    padding: 0.85rem !important;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28) !important;
+  }
+  .insp-hotspot__btn {
+    width: 30px !important;
+    height: 30px !important;
+    font-size: 1.15rem !important;
+  }
+}
+
+/* 5. Offers Page: Promotions Grid Mobile Responsiveness */
+.promotions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+  gap: 2.5rem;
+}
+
+.promo-card {
+  background: var(--color-canvas);
+  border: 1.5px solid rgba(197, 164, 93, 0.35);
+  border-radius: 6px;
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-shadow: var(--shadow-sm);
+}
+
+@media (max-width: 640px) {
+  .promotions-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+  }
+  .promo-card {
+    padding: 1.75rem 1.25rem !important;
+  }
+}
+
+/* 6. Showroom Page: Multi-Floor Tour Grid Mobile Responsiveness */
+.showroom-tour-section {
+  padding: 5rem 0;
+  background-color: #FFFFFF;
+  border-bottom: 1px solid rgba(16, 43, 70, 0.08);
+}
+
+.showroom-tour-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3.5rem;
+  align-items: center;
+}
+
+@media (max-width: 900px) {
+  .showroom-tour-section {
+    padding: 3.5rem 0 !important;
+  }
+  .showroom-tour-grid {
+    grid-template-columns: 1fr !important;
+    gap: 2.25rem !important;
+  }
+}
+
+/* 7. Category Landing Template (All Category Pages): Filter Bar & FAQs */
+.cat-filter-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  background-color: #FFFFFF;
+  border-radius: 6px;
+  border: 1px solid rgba(16, 43, 70, 0.08);
+  margin-bottom: 2.5rem;
+}
+
+.cat-filter-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.cat-faq-box {
+  padding: 3rem;
+}
+
+@media (max-width: 640px) {
+  .cat-filter-bar {
+    padding: 1rem !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+  .cat-filter-controls {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+  .cat-filter-controls select,
+  .cat-filter-bar select {
+    width: 100% !important;
+  }
+  .cat-faq-box {
+    padding: 1.75rem 1.25rem !important;
+  }
+}
+
+/* 8. Search Modal Card Mobile Sizing */
+.search-modal-card {
+  padding: 2rem;
+}
+
+@media (max-width: 640px) {
+  .search-modal-card {
+    padding: 1.25rem 1rem !important;
+  }
+}
+
+/* 9. Floating WhatsApp Mobile Sizing & Placement */
+@media (max-width: 640px) {
+  .floating-whatsapp-container {
+    bottom: 1.25rem !important;
+    right: 1.25rem !important;
+  }
+  .floating-whatsapp-btn {
+    width: 48px !important;
+    height: 48px !important;
+  }
+  .floating-whatsapp-btn svg {
+    width: 24px !important;
+    height: 24px !important;
+  }
+}
+
+/* 10. Smooth Touch Scrolling on All Scrollable Drawers & Lists */
+#mobile-navigation-drawer,
+#cart-drawer-panel,
+#wishlist-drawer-panel,
+.cf-tabs {
+  -webkit-overflow-scrolling: touch;
+}

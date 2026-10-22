@@ -134,9 +134,9 @@ export const ShowroomPageClient: React.FC = () => {
         </section>
 
         {/* Multi-Zone Experience Tour & Logistics Pavilion */}
-        <section style={{ padding: "5rem 0", backgroundColor: "#FFFFFF", borderBottom: "1px solid rgba(16,43,70,0.08)" }}>
+        <section className="showroom-tour-section">
           <div className="container">
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "3.5rem", alignItems: "center" }} className="showroom-tour-grid">
+            <div className="showroom-tour-grid">
               <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
                 <div style={{ position: "relative", height: "230px", borderRadius: "10px", overflow: "hidden", boxShadow: "0 15px 35px rgba(16,43,70,0.12)" }}>
                   <Image

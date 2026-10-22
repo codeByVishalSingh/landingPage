@@ -64,12 +64,12 @@ export const SearchModal: React.FC<SearchModalProps> = ({
     >
       <div
         id="search-modal-card"
+        className="search-modal-card"
         style={{
           width: "100%",
           maxWidth: "680px",
           background: "#FFFFFF",
           borderRadius: "6px",
-          padding: "2rem",
           boxShadow: "0 25px 60px rgba(16, 43, 70, 0.3)",
           border: "1px solid rgba(16, 43, 70, 0.12)",
         }}

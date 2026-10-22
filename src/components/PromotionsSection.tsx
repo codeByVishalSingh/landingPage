@@ -55,13 +55,7 @@ export const PromotionsSection: React.FC = () => {
         </div>
 
         {/* Promotions Grid */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))",
-            gap: "2.5rem",
-          }}
-        >
+        <div className="promotions-grid">
           {CURRENT_PROMOTIONS.map((promo, idx) => (
             <motion.div
               key={promo.id}
@@ -69,16 +63,7 @@ export const PromotionsSection: React.FC = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: idx * 0.15, duration: 0.5 }}
-              style={{
-                background: "var(--color-canvas)",
-                border: "1.5px solid rgba(197, 164, 93, 0.35)",
-                borderRadius: "6px",
-                padding: "2.5rem",
-                display: "flex",
-                flexDirection: "column",
-                position: "relative",
-                boxShadow: "var(--shadow-sm)",
-              }}
+              className="promo-card"
             >
               {/* Badge */}
               <div
