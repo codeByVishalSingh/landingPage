@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { CurrencyCode, Product, ProductFinish } from "@/types";
 import { PRODUCTS, formatPriceWithCurrency, getWhatsAppEnquiryUrl } from "@/data/products";
 
@@ -68,9 +68,8 @@ const AudoCardItem: React.FC<{
           style={{
             position: "relative",
             width: "100%",
-            aspectRatio: "1 / 1",
             overflow: "hidden",
-            backgroundColor: "#F5F3EF",
+            backgroundColor: "#FFFFFF",
           }}
         >
           {/* Main Image with Smooth Micro-zoom on Hover */}
@@ -78,17 +77,17 @@ const AudoCardItem: React.FC<{
             style={{
               position: "relative",
               width: "100%",
-              height: "100%",
-              transform: isHovered ? "scale(1.05)" : "scale(1)",
+              transform: isHovered ? "scale(1.03)" : "scale(1)",
               transition: "transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)",
             }}
           >
             <Image
               src={selectedFinish.image || (isHovered && product.hoverImage ? product.hoverImage : product.primaryImage)}
               alt={product.name}
-              fill
+              width={0}
+              height={0}
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              style={{ objectFit: "cover" }}
+              style={{ width: "100%", height: "auto", display: "block" }}
               priority
             />
           </div>
@@ -353,246 +352,185 @@ export const AudoProductStage: React.FC<AudoProductStageProps> = ({
   onQuickView,
 }) => {
   const [activeTab, setActiveTab] = useState<TabType>("new");
-  const [pageIndex, setPageIndex] = useState(0);
+  const [index, setIndex] = useState(0);
 
-  // Grouped products for tabs: Stage pieces are prioritized
+  const [VISIBLE, setVisible] = useState(3);
+
+  useEffect(() => {
+    const update = () => setVisible(window.innerWidth <= 640 ? 1 : window.innerWidth <= 992 ? 2 : 3);
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
+
   const tabProducts = React.useMemo(() => {
-    return STAGE_PRODUCTS;
+    const all = [...STAGE_PRODUCTS, ...PRODUCTS.filter((p) => !STAGE_PRODUCTS.some((s) => s.id === p.id))];
+    if (activeTab === "bestsellers") return [...all].sort((a, b) => b.reviewCount - a.reviewCount);
+    if (activeTab === "sale") return [...all].sort((a, b) => (a.priceINR ?? a.priceUSD) - (b.priceINR ?? b.priceUSD)).slice(0, 8);
+    return [...STAGE_PRODUCTS, ...all.filter((p) => !STAGE_PRODUCTS.some((s) => s.id === p.id)).sort((a, b) => b.year - a.year)];
   }, [activeTab]);
 
-  const cardsPerPage = 3;
-  const maxPages = 1;
-  const currentCards = tabProducts;
+  const maxIndex = Math.max(0, tabProducts.length - VISIBLE);
+  const clamped = Math.min(index, maxIndex);
 
-  const handlePrev = () => {
-    setPageIndex(0);
+  // Swipe / drag the track sideways to move one card at a time.
+  const swipeStart = React.useRef<number | null>(null);
+  const onSwipeStart = (e: React.PointerEvent) => {
+    swipeStart.current = e.clientX;
+  };
+  const onSwipeEnd = (e: React.PointerEvent) => {
+    if (swipeStart.current === null) return;
+    const dx = e.clientX - swipeStart.current;
+    swipeStart.current = null;
+    if (Math.abs(dx) < 40) return;
+    setIndex(dx < 0 ? Math.min(maxIndex, clamped + 1) : Math.max(0, clamped - 1));
   };
 
-  const handleNext = () => {
-    setPageIndex(0);
+  const selectTab = (tab: TabType) => {
+    setActiveTab(tab);
+    setIndex(0);
   };
+
+  const tabs: { key: TabType; label: string }[] = [
+    { key: "new", label: "New Designs" },
+    { key: "bestsellers", label: "Best Sellers" },
+    { key: "sale", label: "Sale" },
+  ];
 
   return (
-    <section
-      id="audo-product-stage"
-      style={{
-        padding: "5rem 0 6rem",
-        backgroundColor: "var(--color-canvas)",
-      }}
-    >
-      <div className="container" style={{ maxWidth: "1320px", margin: "0 auto" }}>
-        {/* Floating 3D Curved Canvas Container (Matching Audo Reference Screenshot) */}
-        <motion.div
-          initial={{ opacity: 0, y: 35 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.2 }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+    <section id="audo-product-stage" style={{ padding: 0, backgroundColor: "var(--color-canvas)" }}>
+      <div className="audo-stage-container" style={{ background: "#FFFFFF", overflow: "hidden" }}>
+        {/* Header Row: Tabs on Left + Carousel Arrows on Right */}
+        <div
           style={{
-            background: "#FFFFFF",
-            borderRadius: "28px",
-            border: "1px solid rgba(16, 43, 70, 0.08)",
-            boxShadow: "0 24px 60px rgba(16, 43, 70, 0.06)",
-            padding: "2.5rem 3rem",
-            position: "relative",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            borderBottom: "1px solid #ECEAE5",
+            padding: "7rem 2rem 1.5rem",
+            flexWrap: "wrap",
+            gap: "1rem",
           }}
-          className="audo-stage-container"
         >
-          {/* Header Row: Tabs on Left + Carousel Arrows on Right */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              borderBottom: "1px solid #ECEAE5",
-              paddingBottom: "1.75rem",
-              marginBottom: "0",
-              flexWrap: "wrap",
-              gap: "1rem",
-            }}
-          >
-            {/* Left: Interactive Tab Buttons */}
-            <div style={{ display: "flex", alignItems: "center", gap: "2rem" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "2rem" }}>
+            {tabs.map((t) => (
               <button
-                onClick={() => {
-                  setActiveTab("new");
-                  setPageIndex(0);
-                }}
+                key={t.key}
+                onClick={() => selectTab(t.key)}
                 style={{
                   background: "transparent",
                   border: "none",
                   cursor: "pointer",
                   fontFamily: "var(--font-sans)",
                   fontSize: "1.25rem",
-                  fontWeight: activeTab === "new" ? 700 : 400,
-                  color: activeTab === "new" ? "#102B46" : "#848B94",
+                  fontWeight: activeTab === t.key ? 700 : 400,
+                  color: activeTab === t.key ? "#111111" : "#9A9A9A",
                   padding: 0,
-                  transition: "all 0.2s ease",
+                  transition: "color 0.2s ease",
                 }}
               >
-                New Designs
+                {t.label}
               </button>
-
-              <button
-                onClick={() => {
-                  setActiveTab("bestsellers");
-                  setPageIndex(0);
-                }}
-                style={{
-                  background: "transparent",
-                  border: "none",
-                  cursor: "pointer",
-                  fontFamily: "var(--font-sans)",
-                  fontSize: "1.25rem",
-                  fontWeight: activeTab === "bestsellers" ? 700 : 400,
-                  color: activeTab === "bestsellers" ? "#102B46" : "#848B94",
-                  padding: 0,
-                  transition: "all 0.2s ease",
-                }}
-              >
-                Best Sellers
-              </button>
-
-              <button
-                onClick={() => {
-                  setActiveTab("sale");
-                  setPageIndex(0);
-                }}
-                style={{
-                  background: "transparent",
-                  border: "none",
-                  cursor: "pointer",
-                  fontFamily: "var(--font-sans)",
-                  fontSize: "1.25rem",
-                  fontWeight: activeTab === "sale" ? 700 : 400,
-                  color: activeTab === "sale" ? "#102B46" : "#848B94",
-                  padding: 0,
-                  transition: "all 0.2s ease",
-                }}
-              >
-                Sale
-              </button>
-            </div>
-
-            {/* Right: Carousel Arrows */}
-            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-              <button
-                onClick={handlePrev}
-                aria-label="Previous products"
-                style={{
-                  background: "transparent",
-                  border: "none",
-                  cursor: "pointer",
-                  padding: "0.5rem",
-                  color: "#102B46",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  transition: "transform 0.2s ease",
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.transform = "translateX(-3px)")}
-                onMouseLeave={(e) => (e.currentTarget.style.transform = "translateX(0)")}
-              >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M19 12H5M12 19l-7-7 7-7" />
-                </svg>
-              </button>
-
-              <button
-                onClick={handleNext}
-                aria-label="Next products"
-                style={{
-                  background: "transparent",
-                  border: "none",
-                  cursor: "pointer",
-                  padding: "0.5rem",
-                  color: "#102B46",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  transition: "transform 0.2s ease",
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.transform = "translateX(3px)")}
-                onMouseLeave={(e) => (e.currentTarget.style.transform = "translateX(0)")}
-              >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M5 12h14M12 5l7 7-7 7" />
-                </svg>
-              </button>
-            </div>
+            ))}
           </div>
 
-          {/* 3-Column Product Grid with Smooth Transition */}
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(3, 1fr)",
-              minHeight: "440px",
-            }}
-            className="audo-stage-grid"
-          >
-            <AnimatePresence mode="wait">
-              {currentCards.map((product, idx) => (
-                <motion.div
-                  key={`${activeTab}-${product.id}-${pageIndex}-${idx}`}
-                  initial={{ opacity: 0, y: 15 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -15 }}
-                  transition={{ duration: 0.35, delay: idx * 0.08 }}
-                  style={{ height: "100%", display: "flex", flexDirection: "column" }}
-                >
-                  <AudoCardItem
-                    product={product}
-                    currency={currency}
-                    isWishlisted={wishlistIds.includes(product.id)}
-                    onToggleWishlist={onToggleWishlist}
-                    onQuickView={onQuickView}
-                    showDivider={idx < currentCards.length - 1}
-                  />
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </div>
-
-          {/* Bottom Row: Shop All Link */}
-          <div
-            style={{
-              borderTop: "1px solid #ECEAE5",
-              paddingTop: "1.75rem",
-              marginTop: "1rem",
-              display: "flex",
-              justifyContent: "center",
-            }}
-          >
-            <Link
-              href="/furniture"
-              style={{
-                fontFamily: "var(--font-sans)",
-                fontSize: "0.875rem",
-                fontWeight: 700,
-                color: "#102B46",
-                textDecoration: "none",
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "0.5rem",
-                letterSpacing: "0.06em",
-                transition: "all 0.2s ease",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.color = "var(--color-gold)";
-                e.currentTarget.style.transform = "translateX(4px)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.color = "#102B46";
-                e.currentTarget.style.transform = "translateX(0)";
-              }}
+          <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+            <button
+              onClick={() => setIndex(Math.max(0, clamped - 1))}
+              disabled={clamped === 0}
+              aria-label="Previous products"
+              className="audo-arrow"
             >
-              <span>Shop All</span>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M19 12H5M12 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <button
+              onClick={() => setIndex(Math.min(maxIndex, clamped + 1))}
+              disabled={clamped >= maxIndex}
+              aria-label="Next products"
+              className="audo-arrow audo-arrow--next"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M5 12h14M12 5l7 7-7 7" />
               </svg>
-            </Link>
+            </button>
           </div>
-        </motion.div>
+        </div>
+
+        {/* Sliding product track */}
+        <div
+          style={{ overflow: "hidden", touchAction: "pan-y" }}
+          onPointerDown={onSwipeStart}
+          onPointerUp={onSwipeEnd}
+          onPointerCancel={() => (swipeStart.current = null)}
+        >
+          <motion.div
+            key={activeTab}
+            className="audo-stage-grid"
+            initial={false}
+            animate={{ x: `-${(clamped * 100) / tabProducts.length}%` }}
+            transition={{ duration: 0.75, ease: [0.16, 1, 0.3, 1] }}
+            style={{ display: "flex", width: `${(tabProducts.length * 100) / VISIBLE}%`, alignItems: "stretch" }}
+          >
+            {tabProducts.map((product, idx) => (
+              <div key={product.id} style={{ width: `${100 / tabProducts.length}%`, display: "flex", flexDirection: "column" }}>
+                <AudoCardItem
+                  product={product}
+                  currency={currency}
+                  isWishlisted={wishlistIds.includes(product.id)}
+                  onToggleWishlist={onToggleWishlist}
+                  onQuickView={onQuickView}
+                  showDivider={idx < tabProducts.length - 1}
+                />
+              </div>
+            ))}
+          </motion.div>
+        </div>
+
+        {/* Mobile progress, like the reference: 01 / 06 and a bar */}
+        <div className="audo-progress">
+          <span>
+            {String(clamped + 1).padStart(2, "0")} / {String(maxIndex + 1).padStart(2, "0")}
+          </span>
+          <div className="audo-progress__bar">
+            <motion.div
+              className="audo-progress__fill"
+              animate={{ width: `${((clamped + 1) / (maxIndex + 1)) * 100}%` }}
+              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            />
+          </div>
+        </div>
+
+        {/* Bottom Row: Shop All Link */}
+        <div
+          style={{
+            borderTop: "1px solid #ECEAE5",
+            padding: "1.5rem 0",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Link
+            href="/furniture"
+            style={{
+              fontFamily: "var(--font-sans)",
+              fontSize: "0.875rem",
+              fontWeight: 700,
+              color: "#111111",
+              textDecoration: "none",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.6rem",
+            }}
+          >
+            <span>Shop All</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </Link>
+        </div>
       </div>
     </section>
   );

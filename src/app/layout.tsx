@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { SHOWROOM_INFO } from "@/data/products";
+import { SmoothScroll } from "@/components/SmoothScroll";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://casablancasofas.com"),
@@ -39,10 +40,6 @@ export const metadata: Metadata = {
     description:
       "Explore luxury sofas, motorized recliners, solid teakwood beds and Italian marble dining suites at Casablanca Sofas.",
     images: ["/og.jpg"],
-  },
-  icons: {
-    icon: "/images/casablanca-logo.png",
-    apple: "/images/casablanca-logo.png",
   },
 };
 
@@ -103,7 +100,10 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }}
         />
       </head>
-      <body suppressHydrationWarning>{children}</body>
+      <body suppressHydrationWarning>
+        <SmoothScroll />
+        {children}
+      </body>
     </html>
   );
 }

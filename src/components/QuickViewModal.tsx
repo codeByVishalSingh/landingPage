@@ -651,15 +651,7 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({
           </div>
         </div>
       </div>
-
-      <style jsx>{`
-        @media (max-width: 860px) {
-          .modal-grid {
-            grid-template-columns: 1fr !important;
-            max-height: 90vh !important;
-          }
-        }
-      `}</style>
+
     </div>
   );
 };

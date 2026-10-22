@@ -1113,41 +1113,7 @@ export const ShowroomExperience: React.FC = () => {
           ))}
         </motion.div>
       </div>
-
-      <style jsx>{`
-        @keyframes showroomPing {
-          0% {
-            transform: scale(0.9);
-            opacity: 0.9;
-          }
-          70% {
-            transform: scale(1.6);
-            opacity: 0;
-          }
-          100% {
-            transform: scale(1.6);
-            opacity: 0;
-          }
-        }
-
-        @media (max-width: 992px) {
-          .showroom-grid {
-            grid-template-columns: 1fr !important;
-            gap: 2.5rem !important;
-          }
-
-          .showroom-metrics-grid {
-            grid-template-columns: repeat(2, 1fr) !important;
-            gap: 1rem !important;
-          }
-        }
-
-        @media (max-width: 580px) {
-          .showroom-metrics-grid {
-            grid-template-columns: 1fr !important;
-          }
-        }
-      `}</style>
+
     </section>
   );
 };

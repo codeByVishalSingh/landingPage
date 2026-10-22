@@ -3,6 +3,13 @@
 import React, { useEffect, useState, useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 
+// The three lines of hero copy live here so they are easy to change.
+const HERO_EYEBROW = "NEW ARRIVALS";
+const HERO_TITLE = "New Designs.";
+const HERO_CTA = "Shop Now";
+
+const EASE = [0.16, 1, 0.3, 1] as [number, number, number, number];
+
 export const Hero: React.FC = () => {
   const [isMounted, setIsMounted] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -81,8 +88,8 @@ export const Hero: React.FC = () => {
         <div className="hero-video-overlay" />
       </motion.div>
 
-      {/* Hero Content with 3D Parallax Drift */}
-      <div className="container hero-content-container">
+      {/* Centred hero copy: eyebrow, large title, one button */}
+      <div className="hero-content-container">
         <motion.div
           style={{
             y: isMounted ? textY : "0px",
@@ -90,165 +97,47 @@ export const Hero: React.FC = () => {
           }}
           className="hero-text-block"
         >
-          {/* Subtle 3D Pill Badge */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
+          <motion.span
+            className="hero-eyebrow"
+            initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "0.6rem",
-              background: "rgba(16, 43, 70, 0.55)",
-              backdropFilter: "blur(12px)",
-              WebkitBackdropFilter: "blur(12px)",
-              border: "1px solid rgba(200, 184, 154, 0.35)",
-              padding: "0.4rem 1rem",
-              borderRadius: "30px",
-              marginBottom: "1.25rem",
-            }}
+            transition={{ duration: 0.8, delay: 0.15, ease: EASE }}
           >
-            <span
-              style={{
-                width: "6px",
-                height: "6px",
-                borderRadius: "50%",
-                backgroundColor: "var(--color-gold)",
-                boxShadow: "0 0 10px var(--color-gold)",
-              }}
-            />
-            <span
-              style={{
-                fontSize: "0.6875rem",
-                letterSpacing: "0.22em",
-                textTransform: "uppercase",
-                fontWeight: 600,
-                color: "#FAF8F5",
-              }}
-            >
-              CASABLANCA SOFAS · ARCHITECTURAL LIVING
-            </span>
-          </motion.div>
+            {HERO_EYEBROW}
+          </motion.span>
 
-          {/* Main Headline */}
-          <motion.h1
-            initial={{ opacity: 0, y: 25 }}
+          <h1 className="hero-title" aria-label={HERO_TITLE}>
+            {Array.from(HERO_TITLE).map((ch, i) => (
+              <motion.span
+                key={i}
+                aria-hidden="true"
+                className="hero-letter"
+                initial={{ opacity: 0, y: 22 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.9, delay: 0.25 + i * 0.07, ease: EASE }}
+              >
+                {ch === " " ? "\u00A0" : ch}
+              </motion.span>
+            ))}
+          </h1>
+        </motion.div>
+
+        <motion.div className="hero-cta-wrap" style={{ opacity: isMounted ? textOpacity : 1 }}>
+          <motion.a
+            href="#collection"
+            id="hero-shop-now-btn"
+            className="hero-cta-btn"
+            initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.85, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="hero-title"
+            transition={{ duration: 0.8, delay: 1.0, ease: EASE }}
           >
-            Curated Living Spaces <br />
-            <span style={{ fontStyle: "italic", fontWeight: 300, color: "var(--color-gold)" }}>
-              for Discerning Homes.
-            </span>
-          </motion.h1>
-
-          {/* Subtitle description */}
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
-            className="hero-subtitle"
-          >
-            Explore handcrafted solid Burma teakwood suites, German motorized OKIN recliners, and Italian monolithic marble dining tables engineered for generations of timeless comfort.
-          </motion.p>
-
-          {/* Action CTA Group */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
-            className="hero-cta-group"
-            style={{ display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap" }}
-          >
-            <a
-              href="#collection"
-              id="hero-shop-now-btn"
-              className="hero-cta-btn"
-            >
-              <span>EXPLORE COLLECTION</span>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M5 12h14M12 5l7 7-7 7" />
-              </svg>
-            </a>
-
-            <a
-              href="/furniture-showroom-kurnool"
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "0.5rem",
-                color: "#FAF8F5",
-                fontSize: "0.8125rem",
-                letterSpacing: "0.1em",
-                textTransform: "uppercase",
-                textDecoration: "none",
-                fontWeight: 500,
-                padding: "0.85rem 1.6rem",
-                borderRadius: "30px",
-                border: "1px solid rgba(255, 255, 255, 0.25)",
-                background: "rgba(255, 255, 255, 0.06)",
-                backdropFilter: "blur(10px)",
-                transition: "all 0.25s ease",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = "var(--color-gold)";
-                e.currentTarget.style.color = "var(--color-gold)";
-                e.currentTarget.style.transform = "translateY(-2px)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.25)";
-                e.currentTarget.style.color = "#FAF8F5";
-                e.currentTarget.style.transform = "translateY(0)";
-              }}
-            >
-              <span>VISIT SHOWROOM</span>
-            </a>
-          </motion.div>
+            <span>{HERO_CTA}</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </motion.a>
         </motion.div>
       </div>
-
-      {/* Floating 3D Scroll Cue Indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1, duration: 1 }}
-        style={{
-          position: "absolute",
-          bottom: "2.25rem",
-          left: "50%",
-          transform: "translateX(-50%)",
-          zIndex: 10,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          gap: "0.4rem",
-          cursor: "pointer",
-        }}
-        onClick={() => {
-          document.getElementById("collection")?.scrollIntoView({ behavior: "smooth" });
-        }}
-      >
-        <span
-          style={{
-            fontSize: "0.625rem",
-            letterSpacing: "0.24em",
-            textTransform: "uppercase",
-            color: "rgba(250, 248, 245, 0.65)",
-            fontWeight: 600,
-          }}
-        >
-          SCROLL TO EXPLORE
-        </span>
-        <motion.div
-          animate={{ y: [0, 6, 0] }}
-          transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(250, 248, 245, 0.75)" strokeWidth="2">
-            <path d="M7 13l5 5 5-5M7 6l5 5 5-5" />
-          </svg>
-        </motion.div>
-      </motion.div>
     </section>
   );
 };

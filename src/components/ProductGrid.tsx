@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { CurrencyCode, Product, ProductFinish } from "@/types";
 import { ProductCard3D } from "./ProductCard3D";
@@ -42,49 +43,25 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
     );
   }
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.08,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 25 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.5,
-        ease: [0.16, 1, 0.3, 1] as [number, number, number, number],
-      },
-    },
-  };
+  // Re-key on the product set so every filter / sort change replays the entrance.
+  const setKey = products.map((p) => p.id).join("|");
 
   return (
-    <motion.div
+    <div className="full-bleed">
+    <div
       id="product-grid"
       className="catalogue-3col-grid"
-      variants={containerVariants}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: "-50px" }}
       style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-        gap: "2.5rem 2rem",
-        alignItems: "stretch",
         position: "relative",
         zIndex: 2,
       }}
     >
-      {products.map((product) => (
+      {products.map((product, i) => (
         <motion.div
-          key={product.id}
-          variants={itemVariants}
+          key={`${setKey}-${product.id}`}
+          initial={{ opacity: 0, y: 25 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: Math.min(i, 8) * 0.06, ease: [0.16, 1, 0.3, 1] }}
           style={{
             height: "100%",
             display: "flex",
@@ -102,7 +79,11 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
           />
         </motion.div>
       ))}
-    </motion.div>
+    </div>
+    <Link href="/furniture" className="shop-all-link">
+      Shop All <span aria-hidden="true">→</span>
+    </Link>
+    </div>
   );
 };
 

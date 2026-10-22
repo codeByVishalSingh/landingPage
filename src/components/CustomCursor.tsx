@@ -5,7 +5,7 @@ import { motion, useSpring, useMotionValue } from "framer-motion";
 
 export const CustomCursor: React.FC = () => {
   const [cursorText, setCursorText] = useState("");
-  const [cursorVariant, setCursorVariant] = useState<"default" | "hover" | "drag3d">("default");
+  const [cursorVariant, setCursorVariant] = useState<"default" | "hover" | "drag3d" | "drag">("default");
   const [isVisible, setIsVisible] = useState(false);
 
   const mouseX = useMotionValue(-100);
@@ -31,6 +31,7 @@ export const CustomCursor: React.FC = () => {
       if (!target) return;
 
       const dragTarget = target.closest("[data-cursor='drag3d']");
+      const slideTarget = target.closest("[data-cursor='drag']");
       const hoverTarget = target.closest("button, a, select, input, [data-cursor='hover']");
 
       if (dragTarget) {
@@ -39,6 +40,9 @@ export const CustomCursor: React.FC = () => {
       } else if (hoverTarget) {
         setCursorVariant("hover");
         setCursorText("");
+      } else if (slideTarget) {
+        setCursorVariant("drag");
+        setCursorText("DRAG");
       } else {
         setCursorVariant("default");
         setCursorText("");
@@ -97,6 +101,31 @@ export const CustomCursor: React.FC = () => {
             textTransform: "uppercase",
             transform: "translate(-50%, -50%)",
             boxShadow: "0 8px 30px rgba(0, 0, 0, 0.25)",
+          }}
+        >
+          {cursorText}
+        </motion.div>
+      ) : cursorVariant === "drag" ? (
+        <motion.div
+          initial={{ scale: 0.5, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.2 }}
+          style={{
+            width: "72px",
+            height: "72px",
+            borderRadius: "50%",
+            background: "rgba(255, 255, 255, 0.55)",
+            backdropFilter: "blur(10px)",
+            WebkitBackdropFilter: "blur(10px)",
+            border: "1px solid rgba(255, 255, 255, 0.7)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "#333333",
+            fontSize: "0.5625rem",
+            letterSpacing: "0.14em",
+            fontWeight: 600,
+            transform: "translate(-50%, -50%)",
           }}
         >
           {cursorText}

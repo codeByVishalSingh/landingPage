@@ -1005,41 +1005,7 @@ export const CraftsmanshipSection: React.FC = () => {
           ))}
         </motion.div>
       </div>
-
-      <style jsx>{`
-        @keyframes craftPing {
-          0% {
-            transform: scale(0.9);
-            opacity: 0.9;
-          }
-          70% {
-            transform: scale(1.6);
-            opacity: 0;
-          }
-          100% {
-            transform: scale(1.6);
-            opacity: 0;
-          }
-        }
-
-        @media (max-width: 992px) {
-          .craftsmanship-grid {
-            grid-template-columns: 1fr !important;
-            gap: 3rem !important;
-          }
-
-          .craftsmanship-metrics-grid {
-            grid-template-columns: repeat(2, 1fr) !important;
-            gap: 1rem !important;
-          }
-        }
-
-        @media (max-width: 580px) {
-          .craftsmanship-metrics-grid {
-            grid-template-columns: 1fr !important;
-          }
-        }
-      `}</style>
+
     </section>
   );
 };

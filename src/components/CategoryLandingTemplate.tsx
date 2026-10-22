@@ -282,13 +282,8 @@ export const CategoryLandingTemplate: React.FC<CategoryLandingProps> = ({
             </div>
 
             {/* Product Grid */}
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
-                gap: "1.25rem 1rem",
-              }}
-            >
+            <div className="full-bleed">
+            <div className="catalogue-3col-grid">
               {categoryProducts.map((product) => (
                 <ProductCard3D
                   key={product.id}
@@ -302,6 +297,7 @@ export const CategoryLandingTemplate: React.FC<CategoryLandingProps> = ({
                   }}
                 />
               ))}
+            </div>
             </div>
 
             {/* Local FAQs & Showroom Help for Kurnool Local SEO */}

@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useMemo, useRef } from "react";
+import React, { useState, useMemo } from "react";
 import dynamic from "next/dynamic";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 import { CartItem, CurrencyCode, Product, ProductFinish } from "@/types";
 import { PRODUCTS } from "@/data/products";
 import { Header } from "@/components/Header";
@@ -12,10 +12,9 @@ import { AtmosphereShowcase } from "@/components/AtmosphereShowcase";
 import { LookbookHotspot } from "@/components/LookbookHotspot";
 import { CategoryFilter, FilterCategory, SortOption } from "@/components/CategoryFilter";
 import { ProductGrid } from "@/components/ProductGrid";
-import { WhyChooseUs } from "@/components/WhyChooseUs";
-import { ShowroomExperience } from "@/components/ShowroomExperience";
-import { PromotionsSection } from "@/components/PromotionsSection";
 import { Footer } from "@/components/Footer";
+import { StoryCards } from "@/components/StoryCards";
+import { PopularCategories } from "@/components/PopularCategories";
 import { CartDrawer } from "@/components/CartDrawer";
 import { QuickViewModal } from "@/components/QuickViewModal";
 import { SearchModal } from "@/components/SearchModal";
@@ -23,8 +22,6 @@ import { WishlistDrawer } from "@/components/WishlistDrawer";
 import { Toast } from "@/components/Toast";
 import { CategoryBanners } from "@/components/CategoryBanners";
 import { FloatingWhatsApp } from "@/components/FloatingWhatsApp";
-import { CraftsmanshipSection } from "@/components/CraftsmanshipSection";
-import { SustainableBanner } from "@/components/SustainableBanner";
 
 const CustomCursor = dynamic(
   () => import("@/components/CustomCursor").then((mod) => mod.CustomCursor),
@@ -76,19 +73,6 @@ export default function Home() {
   // Filter & Sort state
   const [activeCategory, setActiveCategory] = useState<FilterCategory>("all");
   const [sortBy, setSortBy] = useState<SortOption>("featured");
-
-  // Signature Catalogue Parallax Scroll controls
-  const catalogueRef = useRef<HTMLElement>(null);
-  const { scrollYProgress: catalogueScrollProgress } = useScroll({
-    target: catalogueRef,
-    offset: ["start end", "end start"],
-  });
-
-  const catalogueHeaderY = useTransform(catalogueScrollProgress, [0, 0.4], [35, 0]);
-  const catalogueHeaderOpacity = useTransform(catalogueScrollProgress, [0, 0.25], [0.6, 1]);
-  const watermarkX = useTransform(catalogueScrollProgress, [0, 1], ["4%", "-8%"]);
-  const orb1Y = useTransform(catalogueScrollProgress, [0, 1], [-80, 80]);
-  const orb2Y = useTransform(catalogueScrollProgress, [0, 1], [60, -70]);
 
   // Curated 9 products for the 3x3 homepage catalogue grid (removing the incomplete 4th row)
   const HOMEPAGE_PRODUCTS = useMemo(() => {
@@ -225,6 +209,9 @@ export default function Home() {
         {/* 1. Hero with Cinematic Preserved Video & 3D Scroll-Linked Scaling */}
         <Hero />
 
+        {/* Popular Categories (circles) */}
+        <PopularCategories />
+
         {/* 2. Signature 3-Column AUDO Product Stage */}
         <AudoProductStage
           currency={currency}
@@ -245,130 +232,30 @@ export default function Home() {
             handleAddToCart(p, f, 1);
             setIsCartOpen(true);
           }}
-        />
-
-        {/* 5. Inspiration Lookbook with Interactive Pulsing Hotspot Pins */}
-        <LookbookHotspot
-          currency={currency}
-          onQuickView={setQuickViewProduct}
-        />
+        >
+          {/* 5. Inspiration drag carousel sits between the two banner pairs */}
+          <LookbookHotspot
+            currency={currency}
+            onQuickView={setQuickViewProduct}
+          />
+        </AtmosphereShowcase>
 
 
         {/* 7. Shop by Category / 3 Editorial Discipline Banners */}
         <CategoryBanners onSelectCategory={setActiveCategory} />
 
-        {/* 8. Full Curated Catalogue with Interactive Filters & 3D Stereoscopic Cards */}
-        {/* 8. Full Curated Catalogue with Interactive Filters, Parallax Scroll & 3D Stereoscopic Cards */}
-        <section
-          id="collection"
-          ref={catalogueRef}
-          style={{
-            position: "relative",
-            overflow: "hidden",
-            padding: "6.5rem 0 7rem",
-            backgroundColor: "var(--color-canvas)",
-          }}
-        >
-          {/* Parallax Floating Watermark Typography */}
-          <motion.div
-            aria-hidden="true"
-            style={{
-              position: "absolute",
-              top: "5%",
-              left: "-3%",
-              whiteSpace: "nowrap",
-              fontFamily: "var(--font-serif)",
-              fontSize: "clamp(5rem, 15vw, 13rem)",
-              fontWeight: 300,
-              letterSpacing: "0.18em",
-              color: "rgba(16, 43, 70, 0.025)",
-              textTransform: "uppercase",
-              userSelect: "none",
-              pointerEvents: "none",
-              x: watermarkX,
-              zIndex: 0,
-            }}
-          >
-            CASABLANCA CURATED
-          </motion.div>
-
-          {/* Ambient Parallax Glow Orbs */}
-          <motion.div
-            aria-hidden="true"
-            style={{
-              position: "absolute",
-              top: "10%",
-              right: "-6%",
-              width: "480px",
-              height: "480px",
-              borderRadius: "50%",
-              background: "radial-gradient(circle, rgba(197, 164, 93, 0.12) 0%, rgba(197, 164, 93, 0) 70%)",
-              filter: "blur(40px)",
-              pointerEvents: "none",
-              y: orb1Y,
-              zIndex: 0,
-            }}
-          />
-          <motion.div
-            aria-hidden="true"
-            style={{
-              position: "absolute",
-              bottom: "8%",
-              left: "-8%",
-              width: "520px",
-              height: "520px",
-              borderRadius: "50%",
-              background: "radial-gradient(circle, rgba(16, 43, 70, 0.05) 0%, rgba(16, 43, 70, 0) 70%)",
-              filter: "blur(50px)",
-              pointerEvents: "none",
-              y: orb2Y,
-              zIndex: 0,
-            }}
-          />
-
+        {/* 8. Catalogue with filters */}
+        <section id="collection" className="catalogue-section">
           <div className="container" style={{ position: "relative", zIndex: 1 }}>
             <motion.div
-              style={{
-                textAlign: "center",
-                maxWidth: "780px",
-                margin: "0 auto 2.25rem",
-                y: catalogueHeaderY,
-                opacity: catalogueHeaderOpacity,
-              }}
+              className="catalogue-head"
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.6 }}
+              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             >
-              <span
-                style={{
-                  fontSize: "0.6875rem",
-                  letterSpacing: "0.22em",
-                  textTransform: "uppercase",
-                  fontWeight: 700,
-                  color: "var(--color-gold)",
-                  display: "block",
-                  marginBottom: "0.75rem",
-                }}
-              >
-                CASABLANCA SIGNATURE CATALOGUE
-              </span>
-              <h2
-                style={{
-                  fontFamily: "var(--font-serif)",
-                  fontSize: "clamp(2rem, 4vw, 3.25rem)",
-                  fontWeight: 300,
-                  color: "var(--color-navy)",
-                  marginBottom: "0.85rem",
-                  lineHeight: 1.15,
-                }}
-              >
-                Complete <span style={{ fontStyle: "italic", color: "var(--color-gold)" }}>Catalogue</span>
-              </h2>
-              <p
-                style={{
-                  color: "var(--color-text-secondary)",
-                  fontSize: "1.0625rem",
-                  lineHeight: 1.6,
-                  fontWeight: 300,
-                }}
-              >
+              <h2>Complete Catalogue</h2>
+              <p>
                 Designed for Comfort. Chosen for Your Home. Discover selected designs, colours and finishes for different spaces and lifestyles.
               </p>
             </motion.div>
@@ -397,20 +284,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* 9. Burma Teakwood Craftsmanship & Workshop */}
-        <CraftsmanshipSection />
-
-        {/* 10. Reasons to Choose Showroom */}
-        <WhyChooseUs />
-
-        {/* 11. Showroom Experience & Directions */}
-        <ShowroomExperience />
-
-        {/* 12. Circular Living & Generational Stewardship */}
-        <SustainableBanner />
-
-        {/* 13. Current Festive & Seasonal Promotions */}
-        <PromotionsSection />
+        <StoryCards />
       </main>
 
       {/* Luxury Footer with Contact, Showroom Timings & Local Kurnool SEO */}
