@@ -3,7 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import { CurrencyCode, Product } from "@/types";
-import { CURRENCIES, PRODUCTS } from "@/data/products";
+import { PRODUCTS, formatPriceWithCurrency, SHOWROOM_INFO } from "@/data/products";
 
 interface WishlistDrawerProps {
   isOpen: boolean;
@@ -26,8 +26,22 @@ export const WishlistDrawer: React.FC<WishlistDrawerProps> = ({
 }) => {
   if (!isOpen) return null;
 
-  const curr = CURRENCIES[currency];
   const wishlistedProducts = PRODUCTS.filter((p) => wishlistIds.includes(p.id));
+
+  const handleEnquireAllWhatsApp = () => {
+    if (wishlistedProducts.length === 0) return;
+    const names = wishlistedProducts.map((p, i) => `${i + 1}. ${p.name} (${formatPriceWithCurrency(p.priceUSD, currency, p.priceINR)})`).join("\n");
+    const msg = `Hello Casablanca Sofas Kurnool,\nI have shortlisted these ${wishlistedProducts.length} favourite piece(s) from your catalogue:\n\n${names}\n\nPlease share availability, catalogue brochures and showroom visit timing on Bellary Road.`;
+    const url = `https://wa.me/${SHOWROOM_INFO.whatsappNumber}?text=${encodeURIComponent(msg)}`;
+    window.open(url, "_blank");
+  };
+
+  const handleEnquireSingleWhatsApp = (p: Product) => {
+    const priceText = p.priceOnEnquiry ? "Price on enquiry" : formatPriceWithCurrency(p.priceUSD, currency, p.priceINR);
+    const msg = `Hello Casablanca Sofas Kurnool,\nI am interested in this shortlisted piece:\nProduct: ${p.name}\nPrice Guidance: ${priceText}\n\nPlease confirm availability and showroom display details.`;
+    const url = `https://wa.me/${SHOWROOM_INFO.whatsappNumber}?text=${encodeURIComponent(msg)}`;
+    window.open(url, "_blank");
+  };
 
   return (
     <div
@@ -35,9 +49,9 @@ export const WishlistDrawer: React.FC<WishlistDrawerProps> = ({
       style={{
         position: "fixed",
         inset: 0,
-        backgroundColor: "rgba(22, 21, 20, 0.6)",
-        backdropFilter: "blur(4px)",
-        zIndex: 50,
+        backgroundColor: "rgba(16, 43, 70, 0.65)",
+        backdropFilter: "blur(6px)",
+        zIndex: 1000,
         display: "flex",
         justifyContent: "flex-end",
         animation: "fadeIn 0.25s ease",
@@ -48,10 +62,10 @@ export const WishlistDrawer: React.FC<WishlistDrawerProps> = ({
         id="wishlist-drawer-panel"
         style={{
           width: "100%",
-          maxWidth: "460px",
+          maxWidth: "480px",
           height: "100%",
-          backgroundColor: "var(--color-canvas)",
-          boxShadow: "var(--shadow-drawer)",
+          backgroundColor: "#F7F3EA",
+          boxShadow: "-8px 0 32px rgba(16, 43, 70, 0.2)",
           display: "flex",
           flexDirection: "column",
           animation: "slideLeft 0.35s cubic-bezier(0.16, 1, 0.3, 1)",
@@ -63,25 +77,40 @@ export const WishlistDrawer: React.FC<WishlistDrawerProps> = ({
         <div
           style={{
             padding: "1.75rem 2rem",
-            borderBottom: "1px solid var(--color-card-border)",
+            borderBottom: "1px solid rgba(16, 43, 70, 0.1)",
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
+            backgroundColor: "#FFFFFF",
           }}
         >
           <div>
+            <span
+              style={{
+                fontSize: "0.6875rem",
+                letterSpacing: "0.16em",
+                textTransform: "uppercase",
+                color: "var(--color-gold)",
+                fontWeight: 700,
+                display: "block",
+                marginBottom: "0.25rem",
+              }}
+            >
+              CASABLANCA SHORTLIST
+            </span>
             <h3
               style={{
                 fontFamily: "var(--font-serif)",
                 fontSize: "1.5rem",
-                letterSpacing: "0.04em",
+                color: "var(--color-navy)",
+                letterSpacing: "0.02em",
                 lineHeight: 1,
               }}
             >
-              Saved Creations
+              Shortlisted Favourites
             </h3>
-            <span style={{ fontSize: "0.75rem", color: "var(--color-text-muted)" }}>
-              {wishlistedProducts.length} {wishlistedProducts.length === 1 ? "saved piece" : "saved pieces"}
+            <span style={{ fontSize: "0.75rem", color: "var(--color-charcoal)", opacity: 0.75 }}>
+              {wishlistedProducts.length} {wishlistedProducts.length === 1 ? "design saved" : "designs saved"}
             </span>
           </div>
 
@@ -94,7 +123,7 @@ export const WishlistDrawer: React.FC<WishlistDrawerProps> = ({
               fontSize: "1.25rem",
               cursor: "pointer",
               padding: "0.5rem",
-              color: "var(--color-text-main)",
+              color: "var(--color-navy)",
             }}
           >
             ✕
@@ -110,50 +139,57 @@ export const WishlistDrawer: React.FC<WishlistDrawerProps> = ({
                   width: "56px",
                   height: "56px",
                   borderRadius: "50%",
-                  background: "var(--color-canvas-alt)",
+                  background: "rgba(16, 43, 70, 0.06)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   margin: "0 auto 1.25rem",
-                  color: "var(--color-text-muted)",
+                  color: "var(--color-gold)",
                 }}
               >
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                   <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
                 </svg>
               </div>
-              <h4 style={{ fontFamily: "var(--font-serif)", fontSize: "1.25rem", marginBottom: "0.5rem" }}>
-                No favorites saved yet.
+              <h4 style={{ fontFamily: "var(--font-serif)", fontSize: "1.35rem", color: "var(--color-navy)", marginBottom: "0.5rem" }}>
+                No favourites shortlisted yet.
               </h4>
-              <p style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)", marginBottom: "1.75rem" }}>
-                Tap the heart on any creation to save it to your personal architectural archive.
+              <p style={{ fontSize: "0.8125rem", color: "var(--color-charcoal)", opacity: 0.8, marginBottom: "1.75rem", lineHeight: 1.6 }}>
+                Tap the heart on any sofa, recliner or cot to save it to your personal Kurnool showroom shortlist.
               </p>
               <button onClick={onClose} className="btn-secondary" style={{ padding: "0.75rem 1.5rem" }}>
-                BROWSE ARCHIVE
+                BROWSE CATALOGUE
               </button>
             </div>
           ) : (
-            <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
               {wishlistedProducts.map((p) => {
-                const itemPrice = Math.round(p.priceUSD * curr.rate);
+                const formattedPrice = p.priceOnEnquiry
+                  ? "Price on enquiry"
+                  : formatPriceWithCurrency(p.priceUSD, currency, p.priceINR);
+
                 return (
                   <div
                     key={p.id}
                     style={{
                       display: "grid",
-                      gridTemplateColumns: "75px 1fr auto",
-                      gap: "1rem",
-                      paddingBottom: "1.25rem",
-                      borderBottom: "1px solid rgba(28, 26, 24, 0.08)",
-                      alignItems: "center",
+                      gridTemplateColumns: "80px 1fr",
+                      gap: "1.1rem",
+                      padding: "1rem",
+                      background: "#FFFFFF",
+                      borderRadius: "8px",
+                      border: "1px solid rgba(16, 43, 70, 0.08)",
+                      position: "relative",
                     }}
                   >
                     <div
                       style={{
                         position: "relative",
-                        width: "75px",
-                        height: "85px",
+                        width: "80px",
+                        height: "90px",
                         backgroundColor: "#EFECE6",
+                        borderRadius: "4px",
+                        overflow: "hidden",
                         cursor: "pointer",
                       }}
                       onClick={() => {
@@ -164,54 +200,74 @@ export const WishlistDrawer: React.FC<WishlistDrawerProps> = ({
                       <Image src={p.primaryImage} alt={p.name} fill style={{ objectFit: "cover" }} />
                     </div>
 
-                    <div>
-                      <h4
-                        style={{
-                          fontFamily: "var(--font-serif)",
-                          fontSize: "1.0625rem",
-                          lineHeight: 1.25,
-                          cursor: "pointer",
-                        }}
-                        onClick={() => {
-                          onSelectProduct(p);
-                          onClose();
-                        }}
-                      >
-                        {p.name}
-                      </h4>
-                      <div style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", marginBottom: "0.4rem" }}>
-                        {p.designer}
+                    <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+                      <div>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                          <h4
+                            style={{
+                              fontFamily: "var(--font-serif)",
+                              fontSize: "1.0625rem",
+                              color: "var(--color-navy)",
+                              lineHeight: 1.25,
+                              cursor: "pointer",
+                            }}
+                            onClick={() => {
+                              onSelectProduct(p);
+                              onClose();
+                            }}
+                          >
+                            {p.name}
+                          </h4>
+                          <button
+                            onClick={() => onRemoveWishlist(p)}
+                            aria-label="Remove item"
+                            style={{
+                              background: "transparent",
+                              border: "none",
+                              color: "#888",
+                              cursor: "pointer",
+                              fontSize: "0.875rem",
+                              padding: "0 0.25rem",
+                            }}
+                          >
+                            ✕
+                          </button>
+                        </div>
+                        <div style={{ fontSize: "0.71875rem", color: "var(--color-gold)", fontWeight: 600, marginTop: "0.2rem" }}>
+                          {p.badge || p.tag || "Kurnool Showroom"}
+                        </div>
+                        <div style={{ fontWeight: 700, fontSize: "0.875rem", color: "var(--color-navy)", marginTop: "0.35rem" }}>
+                          {formattedPrice}
+                        </div>
                       </div>
-                      <div style={{ fontWeight: 600, fontSize: "0.875rem" }}>
-                        {curr.symbol}
-                        {itemPrice.toLocaleString()}
-                      </div>
-                    </div>
 
-                    <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-                      <button
-                        onClick={() => onMoveToCart(p)}
-                        className="btn-primary"
-                        style={{
-                          padding: "0.45rem 0.8rem",
-                          fontSize: "0.6875rem",
-                        }}
-                      >
-                        ADD TO BAG
-                      </button>
-                      <button
-                        onClick={() => onRemoveWishlist(p)}
-                        style={{
-                          background: "transparent",
-                          border: "none",
-                          fontSize: "0.6875rem",
-                          color: "var(--color-text-muted)",
-                          cursor: "pointer",
-                          textDecoration: "underline",
-                        }}
-                      >
-                        Remove
-                      </button>
+                      <div style={{ display: "flex", gap: "0.5rem", marginTop: "0.75rem", flexWrap: "wrap" }}>
+                        <button
+                          onClick={() => handleEnquireSingleWhatsApp(p)}
+                          className="btn-whatsapp"
+                          style={{
+                            padding: "0.4rem 0.75rem",
+                            fontSize: "0.6875rem",
+                            borderRadius: "4px",
+                          }}
+                        >
+                          ENQUIRE ON WHATSAPP
+                        </button>
+                        <button
+                          onClick={() => {
+                            onSelectProduct(p);
+                            onClose();
+                          }}
+                          className="btn-secondary"
+                          style={{
+                            padding: "0.4rem 0.65rem",
+                            fontSize: "0.6875rem",
+                            borderRadius: "4px",
+                          }}
+                        >
+                          DETAILS
+                        </button>
+                      </div>
                     </div>
                   </div>
                 );
@@ -219,6 +275,38 @@ export const WishlistDrawer: React.FC<WishlistDrawerProps> = ({
             </div>
           )}
         </div>
+
+        {/* Footer Actions */}
+        {wishlistedProducts.length > 0 && (
+          <div
+            style={{
+              padding: "1.5rem 2rem",
+              borderTop: "1px solid rgba(16, 43, 70, 0.1)",
+              backgroundColor: "#FFFFFF",
+              display: "flex",
+              flexDirection: "column",
+              gap: "0.75rem",
+            }}
+          >
+            <button
+              onClick={handleEnquireAllWhatsApp}
+              className="btn-whatsapp"
+              style={{
+                width: "100%",
+                padding: "0.95rem",
+                borderRadius: "6px",
+                fontSize: "0.8125rem",
+                letterSpacing: "0.08em",
+                justifyContent: "center",
+              }}
+            >
+              ENQUIRE ALL {wishlistedProducts.length} ITEMS ON WHATSAPP
+            </button>
+            <p style={{ textAlign: "center", fontSize: "0.6875rem", color: "var(--color-charcoal)", opacity: 0.7 }}>
+              Our Kurnool sales executive will reply on WhatsApp with dimensions, discounts & live photos.
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

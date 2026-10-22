@@ -1,329 +1,377 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import { CurrencyCode } from "@/types";
-import { CURRENCIES } from "@/data/products";
+import { SHOWROOM_INFO, getWhatsAppEnquiryUrl, getShowroomBookingWhatsAppUrl } from "@/data/products";
+import { BrandLogo } from "@/components/BrandLogo";
 
 interface HeaderProps {
   currency: CurrencyCode;
   onCurrencyChange: (c: CurrencyCode) => void;
-  cartCount: number;
+  cartCount?: number;
   wishlistCount: number;
-  onOpenCart: () => void;
+  onOpenCart?: () => void;
   onOpenWishlist: () => void;
   onOpenSearch: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
-  currency,
-  onCurrencyChange,
-  cartCount,
-  wishlistCount,
+  cartCount = 0,
+  wishlistCount = 0,
   onOpenCart,
   onOpenWishlist,
   onOpenSearch,
 }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [signInOpen, setSignInOpen] = useState(false);
-  const [signInEmail, setSignInEmail] = useState("");
-  const [signInSuccess, setSignInSuccess] = useState(false);
+  const [shopDropdownOpen, setShopDropdownOpen] = useState(false);
+  const [contactModalOpen, setContactModalOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      setIsScrolled(window.scrollY > 30);
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const handleSignInSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (signInEmail) {
-      setSignInSuccess(true);
-      setTimeout(() => {
-        setSignInSuccess(false);
-        setSignInOpen(false);
-        setSignInEmail("");
-      }, 1800);
-    }
-  };
-
-  const leftNavItems = [
-    { label: "LIVING", href: "#spaces" },
-    { label: "DINING", href: "#dining-dialogue" },
-    { label: "BEDROOM", href: "#bedroom-atmosphere" },
-    { label: "OUTDOOR", href: "#collection" },
-    { label: "OFFICE", href: "#collection" },
-    { label: "STORAGE", href: "#collection" },
+  const shopCategories = [
+    { label: "Sofas & Couches", href: "/sofas-kurnool", count: "24 Designs" },
+    { label: "Motorized Recliners", href: "/recliners-kurnool", count: "16 Models" },
+    { label: "Beds & Cots", href: "/beds-cots-kurnool", count: "28 Cots" },
+    { label: "Dining Tables", href: "/dining-tables-kurnool", count: "18 Sets" },
+    { label: "Curtains & Blinds", href: "/curtains-blinds-kurnool", count: "12 Styles" },
+    { label: "Mattresses & Spine Care", href: "/mattresses-kurnool", count: "Orthopedic" },
+    { label: "All Furniture Catalogue", href: "/furniture", count: "View All" },
   ];
 
-  const rightNavItems = [
-    { label: "LIGHTING", href: "#collection" },
-    { label: "ACCESSORIES", href: "#collection" },
+  const mainMenuItems = [
+    { label: "Home", href: "/" },
+    { label: "Shop", href: "/furniture", isDropdown: true },
+    { label: "Collections", href: "/#collection" },
+    { label: "Our Showroom", href: "/furniture-showroom-kurnool" },
+    { label: "Offers", href: "/offers" },
   ];
 
   return (
     <>
-      {/* Top Announcement Bar */}
-      <div
-        id="announcement-bar"
-        style={{
-          background: "#161514",
-          color: "#FAF8F5",
-          fontSize: "0.6875rem",
-          letterSpacing: "0.18em",
-          padding: "0.5rem 0",
-          overflow: "hidden",
-          whiteSpace: "nowrap",
-          borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
-        }}
-      >
-        <div className="animate-marquee" style={{ display: "flex", gap: "3rem" }}>
-          <span>COMPLIMENTARY WHITE GLOVE DELIVERY ON ORDERS OVER $1,500</span>
-          <span>•</span>
-          <span>ROOTED IN DANISH SOFT MINIMALISM & ARCHITECTURAL PURSUIT</span>
-          <span>•</span>
-          <span>VISIT THE AUDO CONCEPT RESIDENCE IN NORDHAVN, COPENHAGEN</span>
-          <span>•</span>
-          <span>100% FSC® CERTIFIED SUSTAINABLE TIMBERS & NATURAL STONE</span>
-          <span>•</span>
-          <span>COMPLIMENTARY WHITE GLOVE DELIVERY ON ORDERS OVER $1,500</span>
-          <span>•</span>
-          <span>ROOTED IN DANISH SOFT MINIMALISM & ARCHITECTURAL PURSUIT</span>
-        </div>
-      </div>
-
-      {/* Main Navigation Bar (Exact Behance AUDO Layout) */}
+      {/* 
+        COMPACT LUXURY NAVBAR - Section 2 of Brief:
+        Left: Circular CB medallion + CASABLANCA SOFAS
+        Center: HOME · SHOP · COLLECTIONS · OUR SHOWROOM · OFFERS · CONTACT
+        Right: Search Icon · Shortlist Bookmark Icon · Visible WhatsApp Enquiry Button
+      */}
       <header
         id="main-navigation"
+        className={`main-header ${isScrolled ? "is-scrolled" : ""}`}
         style={{
-          position: "sticky",
+          position: "fixed",
           top: 0,
-          zIndex: 50,
-          background: isScrolled ? "rgba(255, 255, 255, 0.98)" : "rgba(255, 255, 255, 0.95)",
-          backdropFilter: "blur(12px)",
-          borderBottom: "1px solid rgba(28, 26, 24, 0.08)",
-          boxShadow: isScrolled ? "0 4px 25px rgba(0, 0, 0, 0.06)" : "none",
-          transition: "all 0.3s ease",
+          left: 0,
+          right: 0,
+          zIndex: 1000,
+          transition: "all 0.35s cubic-bezier(0.16, 1, 0.3, 1)",
+          background: isScrolled
+            ? "rgba(16, 43, 70, 0.98)"
+            : "linear-gradient(180deg, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0.12) 65%, transparent 100%)",
+          backdropFilter: isScrolled ? "blur(16px)" : "none",
+          borderBottom: isScrolled
+            ? "1px solid rgba(197, 164, 93, 0.25)"
+            : "none",
+          boxShadow: isScrolled ? "0 4px 24px rgba(0, 0, 0, 0.35)" : "none",
         }}
       >
         <div
+          className="header-inner"
           style={{
-            maxWidth: "1860px",
+            maxWidth: "1820px",
             margin: "0 auto",
-            padding: "0 2rem",
-            height: "72px",
-            display: "grid",
-            gridTemplateColumns: "1fr auto 1fr",
-            alignItems: "center",
+            position: "relative",
           }}
-          className="nav-container"
         >
-          {/* LEFT: Category Navigation (Desktop) */}
-          <div style={{ display: "flex", alignItems: "center", gap: "1.5rem" }} className="desktop-left-nav">
-            {leftNavItems.map((item) => (
-              <a
-                key={item.label}
-                href={item.href}
-                style={{
-                  color: "#191919",
-                  textDecoration: "none",
-                  fontSize: "0.8125rem",
-                  fontWeight: 600,
-                  letterSpacing: "0.12em",
-                  textTransform: "uppercase",
-                  transition: "color 0.2s ease",
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-brass)")}
-                onMouseLeave={(e) => (e.currentTarget.style.color = "#191919")}
-              >
-                {item.label}
-              </a>
-            ))}
-          </div>
-
-          {/* Mobile Hamburger (Only visible on small screens) */}
-          <button
-            id="mobile-menu-btn"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-label="Toggle mobile menu"
-            className="mobile-only-btn"
-            style={{
-              background: "transparent",
-              border: "none",
-              cursor: "pointer",
-              padding: "0.5rem",
-              color: "#191919",
-              display: "none",
-            }}
-          >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              {mobileMenuOpen ? (
-                <>
-                  <line x1="18" y1="6" x2="6" y2="18"></line>
-                  <line x1="6" y1="6" x2="18" y2="18"></line>
-                </>
-              ) : (
-                <>
-                  <line x1="3" y1="12" x2="21" y2="12"></line>
-                  <line x1="3" y1="6" x2="21" y2="6"></line>
-                  <line x1="3" y1="18" x2="21" y2="18"></line>
-                </>
-              )}
-            </svg>
-          </button>
-
-          {/* CENTER: Iconic AUDO Serif Logo */}
-          <div style={{ textAlign: "center" }}>
-            <a
+          {/* LEFT: BRAND LOGO */}
+          <div className="header-brand-wrap">
+            <Link
               href="/"
+              aria-label="Casablanca Sofas - Home"
               style={{
                 textDecoration: "none",
-                display: "inline-block",
-                color: "#161514",
+                display: "inline-flex",
+                alignItems: "center",
+                cursor: "pointer",
               }}
             >
-              <span
-                style={{
-                  fontFamily: "var(--font-serif)",
-                  fontSize: "clamp(2rem, 3vw, 2.5rem)",
-                  fontWeight: 400,
-                  letterSpacing: "-0.01em",
-                  lineHeight: 1,
-                  display: "block",
-                }}
-              >
-                Audo
-              </span>
-            </a>
+              <BrandLogo size="lg" isScrolled={isScrolled} />
+            </Link>
           </div>
 
-          {/* RIGHT: Categories + Utility Actions */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "flex-end",
-              gap: "1.5rem",
-            }}
+          {/* CENTER: Main Menu (HOME · SHOP · COLLECTIONS · OUR SHOWROOM · OFFERS · CONTACT) */}
+          <nav
+            aria-label="Primary navigation"
+            className="desktop-nav-links"
           >
-            {/* Right Desktop Nav Links */}
-            <div style={{ display: "flex", alignItems: "center", gap: "1.5rem" }} className="desktop-right-nav">
-              {rightNavItems.map((item) => (
-                <a
-                  key={item.label}
-                  href={item.href}
-                  style={{
-                    color: "#191919",
-                    textDecoration: "none",
-                    fontSize: "0.8125rem",
-                    fontWeight: 600,
-                    letterSpacing: "0.12em",
-                    textTransform: "uppercase",
-                    transition: "color 0.2s ease",
-                  }}
-                  onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-brass)")}
-                  onMouseLeave={(e) => (e.currentTarget.style.color = "#191919")}
-                >
-                  {item.label}
-                </a>
-              ))}
-            </div>
+              {mainMenuItems.map((item, idx) => {
+                if (item.isDropdown) {
+                  return (
+                    <div
+                      key={idx}
+                      style={{ position: "relative" }}
+                      onMouseEnter={() => setShopDropdownOpen(true)}
+                      onMouseLeave={() => setShopDropdownOpen(false)}
+                    >
+                      <Link
+                        href={item.href}
+                        style={{
+                          fontFamily: "var(--font-serif)",
+                          fontSize: "1.125rem",
+                          color: shopDropdownOpen ? "var(--color-gold)" : "#FAF8F5",
+                          textDecoration: "none",
+                          fontWeight: 400,
+                          letterSpacing: "0.02em",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: "0.35rem",
+                          transition: "color 0.2s ease",
+                        }}
+                      >
+                        <span>{item.label}</span>
+                        <svg
+                          width="11"
+                          height="11"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2.2"
+                          style={{
+                            transition: "transform 0.2s ease",
+                            transform: shopDropdownOpen ? "rotate(180deg)" : "rotate(0deg)",
+                            opacity: 0.85,
+                          }}
+                        >
+                          <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                      </Link>
 
-            {/* Subtle Divider */}
-            <div
-              style={{ width: "1px", height: "20px", background: "rgba(28, 26, 24, 0.12)" }}
-              className="desktop-divider"
-            />
+                      {/* Dropdown Menu */}
+                      {shopDropdownOpen && (
+                        <div
+                          style={{
+                            position: "absolute",
+                            top: "100%",
+                            left: "0",
+                            paddingTop: "0.75rem",
+                            zIndex: 100,
+                          }}
+                        >
+                          <div
+                            style={{
+                              background: "rgba(16, 43, 70, 0.98)",
+                              backdropFilter: "blur(20px)",
+                              border: "1px solid rgba(197, 164, 93, 0.25)",
+                              borderRadius: "8px",
+                              padding: "1.25rem 1.5rem",
+                              minWidth: "260px",
+                              boxShadow: "0 16px 40px rgba(0, 0, 0, 0.35)",
+                              display: "flex",
+                              flexDirection: "column",
+                              gap: "0.6rem",
+                              animation: "fadeIn 0.2s ease",
+                            }}
+                          >
+                            <span
+                              style={{
+                                fontSize: "0.625rem",
+                                letterSpacing: "0.18em",
+                                textTransform: "uppercase",
+                                color: "var(--color-gold)",
+                                fontWeight: 700,
+                                marginBottom: "0.2rem",
+                                paddingBottom: "0.35rem",
+                                borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
+                              }}
+                            >
+                              SHOP BY CATEGORY
+                            </span>
 
-            {/* SEARCH Action Button */}
+                            {shopCategories.map((cat, i) => (
+                              <Link
+                                key={i}
+                                href={cat.href}
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                  alignItems: "center",
+                                  textDecoration: "none",
+                                  color: "#FAF8F5",
+                                  fontSize: "0.875rem",
+                                  padding: "0.3rem 0",
+                                  transition: "all 0.15s ease",
+                                }}
+                                onMouseEnter={(e) => {
+                                  e.currentTarget.style.color = "var(--color-gold)";
+                                  e.currentTarget.style.transform = "translateX(4px)";
+                                }}
+                                onMouseLeave={(e) => {
+                                  e.currentTarget.style.color = "#FAF8F5";
+                                  e.currentTarget.style.transform = "translateX(0)";
+                                }}
+                              >
+                                <span>{cat.label}</span>
+                                <span
+                                  style={{
+                                    fontSize: "0.6875rem",
+                                    color: "rgba(247, 243, 234, 0.5)",
+                                    fontWeight: 500,
+                                  }}
+                                >
+                                  {cat.count}
+                                </span>
+                              </Link>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                }
+
+                return (
+                  <Link
+                    key={idx}
+                    href={item.href}
+                    style={{
+                      fontFamily: "var(--font-serif)",
+                      fontSize: "1.125rem",
+                      color: "#FAF8F5",
+                      textDecoration: "none",
+                      fontWeight: 400,
+                      letterSpacing: "0.02em",
+                      transition: "color 0.2s ease",
+                    }}
+                    onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-gold)")}
+                    onMouseLeave={(e) => (e.currentTarget.style.color = "#FAF8F5")}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
+
+              {/* Contact Link */}
+              <button
+                onClick={() => setContactModalOpen(true)}
+                style={{
+                  background: "transparent",
+                  border: "none",
+                  cursor: "pointer",
+                  fontFamily: "var(--font-serif)",
+                  fontSize: "1.125rem",
+                  color: "#FAF8F5",
+                  fontWeight: 400,
+                  letterSpacing: "0.02em",
+                  padding: 0,
+                  transition: "color 0.2s ease",
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-gold)")}
+                onMouseLeave={(e) => (e.currentTarget.style.color = "#FAF8F5")}
+              >
+                Contact
+              </button>
+            </nav>
+
+          {/* RIGHT: Search icon + Wishlist Bookmark + Visible WhatsApp Enquiry Action */}
+          <div className="header-actions">
+            {/* 1. Search Icon */}
             <button
               onClick={onOpenSearch}
-              aria-label="Search"
+              aria-label="Search collection"
+              className="nav-icon-btn"
               style={{
                 background: "transparent",
                 border: "none",
                 cursor: "pointer",
-                color: "#191919",
+                padding: "0.35rem",
+                color: "#FAF8F5",
                 display: "flex",
                 alignItems: "center",
-                gap: "0.45rem",
-                fontSize: "0.8125rem",
-                fontWeight: 600,
-                letterSpacing: "0.12em",
-                textTransform: "uppercase",
-                padding: "0.4rem 0",
+                justifyContent: "center",
+                transition: "color 0.2s ease, transform 0.2s ease",
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-brass)")}
-              onMouseLeave={(e) => (e.currentTarget.style.color = "#191919")}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = "var(--color-gold)";
+                e.currentTarget.style.transform = "scale(1.1)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = "#FAF8F5";
+                e.currentTarget.style.transform = "scale(1)";
+              }}
             >
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <circle cx="11" cy="11" r="7.5"></circle>
+                <line x1="21" y1="21" x2="16.5" y2="16.5"></line>
               </svg>
-              <span className="desktop-label">SEARCH</span>
             </button>
 
-            {/* Currency Selector */}
-            <div className="desktop-only">
-              <select
-                id="currency-select"
-                aria-label="Select currency"
-                value={currency}
-                onChange={(e) => onCurrencyChange(e.target.value as CurrencyCode)}
-                style={{
-                  background: "#F5F3EF",
-                  border: "none",
-                  borderRadius: "999px",
-                  padding: "0.4rem 0.75rem",
-                  fontSize: "0.75rem",
-                  fontWeight: 600,
-                  color: "#191919",
-                  cursor: "pointer",
-                  outline: "none",
-                }}
-              >
-                {Object.keys(CURRENCIES).map((c) => (
-                  <option key={c} value={c}>
-                    {c} ({CURRENCIES[c as CurrencyCode].symbol})
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Wishlist Heart Button */}
+            {/* 2. Bookmark / Wishlist Icon */}
             <button
               onClick={onOpenWishlist}
-              aria-label="Saved items"
+              aria-label="Saved favourites and shortlist"
+              className="nav-icon-btn"
               style={{
                 position: "relative",
                 background: "transparent",
                 border: "none",
                 cursor: "pointer",
-                padding: "0.4rem",
-                color: "#191919",
+                padding: "0.35rem",
+                color: "#FAF8F5",
                 display: "flex",
                 alignItems: "center",
+                justifyContent: "center",
+                transition: "color 0.2s ease, transform 0.2s ease",
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-brass)")}
-              onMouseLeave={(e) => (e.currentTarget.style.color = "#191919")}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = "var(--color-gold)";
+                e.currentTarget.style.transform = "scale(1.1)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = "#FAF8F5";
+                e.currentTarget.style.transform = "scale(1)";
+              }}
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M19 21l-7-4.5L5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
               </svg>
               {wishlistCount > 0 && (
                 <span
+                  suppressHydrationWarning
                   style={{
                     position: "absolute",
-                    top: "0px",
-                    right: "-2px",
-                    width: "14px",
-                    height: "14px",
+                    top: "-2px",
+                    right: "-3px",
+                    width: "15px",
+                    height: "15px",
                     borderRadius: "50%",
-                    background: "var(--color-brass)",
-                    color: "#FFFFFF",
-                    fontSize: "0.5625rem",
+                    background: "var(--color-gold)",
+                    color: "var(--color-navy)",
+                    fontSize: "0.625rem",
                     fontWeight: 700,
                     display: "flex",
                     alignItems: "center",
@@ -335,284 +383,321 @@ export const Header: React.FC<HeaderProps> = ({
               )}
             </button>
 
-            {/* CART (count) Button - Exact Behance Style */}
-            <button
-              id="cart-btn"
-              onClick={onOpenCart}
-              aria-label="View shopping bag"
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "0.45rem",
-                background: "#161514",
-                color: "#FAF8F5",
-                border: "none",
-                borderRadius: "999px",
-                padding: "0.5rem 1.05rem",
-                fontSize: "0.75rem",
-                fontWeight: 700,
-                letterSpacing: "0.08em",
-                cursor: "pointer",
-                whiteSpace: "nowrap",
-                transition: "background 0.2s ease",
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = "var(--color-brass)")}
-              onMouseLeave={(e) => (e.currentTarget.style.background = "#161514")}
+            {/* 3. VISIBLE WHATSAPP ENQUIRY ACTION BUTTON (Desktop only) */}
+            <a
+              id="header-whatsapp-cta"
+              href={getWhatsAppEnquiryUrl("Direct Showroom Enquiry")}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Enquire on WhatsApp"
+              className="btn-whatsapp desktop-whatsapp-action"
             >
-              <span>CART ({cartCount})</span>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+              </svg>
+              <span>WHATSAPP ENQUIRY</span>
+            </a>
+
+            {/* Mobile Hamburger Toggle */}
+            <button
+              id="mobile-nav-toggle"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label="Toggle mobile navigation menu"
+              className="mobile-hamburger"
+              style={{
+                background: "transparent",
+                border: "none",
+                cursor: "pointer",
+                padding: "0.35rem",
+                color: "#FAF8F5",
+              }}
+            >
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
+                {mobileMenuOpen ? (
+                  <>
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </>
+                ) : (
+                  <>
+                    <line x1="3" y1="7" x2="21" y2="7"></line>
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="17" x2="21" y2="17"></line>
+                  </>
+                )}
+              </svg>
             </button>
           </div>
         </div>
 
-        {/* Mobile Slide-down Drawer */}
+        {/* Mobile Dropdown Panel */}
         {mobileMenuOpen && (
           <div
-            id="mobile-nav-panel"
+            id="mobile-navigation-drawer"
             style={{
-              padding: "2rem",
-              background: "#FFFFFF",
-              borderTop: "1px solid #EBEBEB",
+              padding: "1.75rem 2rem",
+              background: "rgba(16, 43, 70, 0.98)",
+              backdropFilter: "blur(20px)",
+              borderTop: "1px solid rgba(255, 255, 255, 0.08)",
               display: "flex",
               flexDirection: "column",
               gap: "1.25rem",
-              boxShadow: "0 16px 36px rgba(0,0,0,0.12)",
+              boxShadow: "0 20px 40px rgba(0, 0, 0, 0.4)",
             }}
           >
-            <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-              {[...leftNavItems, ...rightNavItems].map((item) => (
-                <a
-                  key={item.label}
-                  href={item.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  style={{
-                    fontSize: "1.125rem",
-                    fontWeight: 600,
-                    letterSpacing: "0.08em",
-                    textTransform: "uppercase",
-                    color: "#161514",
-                    textDecoration: "none",
-                    paddingBottom: "0.5rem",
-                    borderBottom: "1px solid #F0ECE1",
-                  }}
-                >
-                  {item.label}
-                </a>
-              ))}
-            </div>
-
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "1rem" }}>
-              <select
-                value={currency}
-                onChange={(e) => onCurrencyChange(e.target.value as CurrencyCode)}
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.85rem" }}>
+              <Link
+                href="/"
+                onClick={() => setMobileMenuOpen(false)}
                 style={{
-                  padding: "0.5rem 1rem",
-                  borderRadius: "999px",
-                  border: "1px solid #E0E0E0",
-                  background: "#FAF8F5",
-                  fontWeight: 600,
-                  fontSize: "0.8125rem",
+                  fontFamily: "var(--font-serif)",
+                  fontSize: "1.25rem",
+                  color: "#FAF8F5",
+                  textDecoration: "none",
+                  paddingBottom: "0.5rem",
+                  borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
                 }}
               >
-                {Object.keys(CURRENCIES).map((c) => (
-                  <option key={c} value={c}>
-                    {c} ({CURRENCIES[c as CurrencyCode].symbol})
-                  </option>
-                ))}
-              </select>
-
+                Home
+              </Link>
+              <Link
+                href="/furniture"
+                onClick={() => setMobileMenuOpen(false)}
+                style={{
+                  fontFamily: "var(--font-serif)",
+                  fontSize: "1.25rem",
+                  color: "#FAF8F5",
+                  textDecoration: "none",
+                  paddingBottom: "0.5rem",
+                  borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
+                }}
+              >
+                Shop
+              </Link>
+              <Link
+                href="/#collection"
+                onClick={() => setMobileMenuOpen(false)}
+                style={{
+                  fontFamily: "var(--font-serif)",
+                  fontSize: "1.25rem",
+                  color: "#FAF8F5",
+                  textDecoration: "none",
+                  paddingBottom: "0.5rem",
+                  borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
+                }}
+              >
+                Collections
+              </Link>
+              <Link
+                href="/furniture-showroom-kurnool"
+                onClick={() => setMobileMenuOpen(false)}
+                style={{
+                  fontFamily: "var(--font-serif)",
+                  fontSize: "1.25rem",
+                  color: "#FAF8F5",
+                  textDecoration: "none",
+                  paddingBottom: "0.5rem",
+                  borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
+                }}
+              >
+                Our Showroom
+              </Link>
+              <Link
+                href="/offers"
+                onClick={() => setMobileMenuOpen(false)}
+                style={{
+                  fontFamily: "var(--font-serif)",
+                  fontSize: "1.25rem",
+                  color: "var(--color-gold)",
+                  textDecoration: "none",
+                  paddingBottom: "0.5rem",
+                  borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
+                }}
+              >
+                Offers
+              </Link>
               <button
                 onClick={() => {
                   setMobileMenuOpen(false);
-                  setSignInOpen(true);
+                  setContactModalOpen(true);
                 }}
                 style={{
                   background: "transparent",
                   border: "none",
-                  fontSize: "0.8125rem",
-                  fontWeight: 600,
-                  letterSpacing: "0.1em",
-                  textTransform: "uppercase",
-                  color: "var(--color-brass)",
+                  textAlign: "left",
+                  padding: 0,
+                  fontFamily: "var(--font-serif)",
+                  fontSize: "1.25rem",
+                  color: "#FAF8F5",
+                  paddingBottom: "0.5rem",
+                  borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
                   cursor: "pointer",
                 }}
               >
-                Collector Sign In
+                Contact
               </button>
+            </div>
+
+            <div style={{ paddingTop: "0.5rem", display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+              <a
+                href={getWhatsAppEnquiryUrl("Mobile Menu Direct Enquiry")}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-whatsapp"
+                style={{ textAlign: "center", width: "100%", justifyContent: "center" }}
+              >
+                Chat on WhatsApp (+91 98490 12345)
+              </a>
+              <a
+                href={`tel:${SHOWROOM_INFO.phone}`}
+                className="btn-secondary"
+                style={{
+                  textAlign: "center",
+                  width: "100%",
+                  justifyContent: "center",
+                  fontSize: "0.75rem",
+                  borderColor: "rgba(255,255,255,0.3)",
+                  color: "#FAF8F5",
+                }}
+              >
+                Call Bellary Road Showroom
+              </a>
             </div>
           </div>
         )}
       </header>
 
-      {/* Collector Sign In Dialog Modal */}
-      {signInOpen && (
+      {/* CONTACT / SHOWROOM DETAILS MODAL */}
+      {contactModalOpen && (
         <div
-          id="signin-modal-backdrop"
-          onClick={() => setSignInOpen(false)}
           style={{
             position: "fixed",
             inset: 0,
-            background: "rgba(22, 21, 20, 0.7)",
+            backgroundColor: "rgba(16, 43, 70, 0.75)",
             backdropFilter: "blur(8px)",
-            zIndex: 1000,
+            zIndex: 1100,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            padding: "1rem",
+            padding: "1.5rem",
+            animation: "fadeIn 0.25s ease",
           }}
+          onClick={() => setContactModalOpen(false)}
         >
           <div
-            onClick={(e) => e.stopPropagation()}
             style={{
               background: "#FFFFFF",
               borderRadius: "8px",
               padding: "2.5rem",
-              maxWidth: "420px",
+              maxWidth: "480px",
               width: "100%",
-              boxShadow: "0 25px 60px rgba(0,0,0,0.3)",
+              boxShadow: "0 20px 50px rgba(0, 0, 0, 0.3)",
               position: "relative",
             }}
+            onClick={(e) => e.stopPropagation()}
           >
             <button
-              onClick={() => setSignInOpen(false)}
-              aria-label="Close dialog"
+              onClick={() => setContactModalOpen(false)}
+              aria-label="Close modal"
               style={{
                 position: "absolute",
                 top: "1.25rem",
                 right: "1.25rem",
                 background: "transparent",
                 border: "none",
+                fontSize: "1.25rem",
                 cursor: "pointer",
-                color: "#757575",
+                color: "var(--color-navy)",
               }}
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-              </svg>
+              ✕
             </button>
 
-            <span
-              style={{
-                fontSize: "0.6875rem",
-                letterSpacing: "0.16em",
-                textTransform: "uppercase",
-                fontWeight: 600,
-                color: "var(--color-brass)",
-                display: "block",
-                marginBottom: "0.5rem",
-              }}
-            >
-              THE AUDO COLLECTOR CIRCLE
-            </span>
-
-            <h3
-              style={{
-                fontFamily: "var(--font-serif)",
-                fontSize: "1.875rem",
-                fontWeight: 400,
-                color: "#191919",
-                marginBottom: "0.5rem",
-              }}
-            >
-              Welcome Back
-            </h3>
-
-            <p style={{ fontSize: "0.875rem", color: "#757575", marginBottom: "1.75rem", lineHeight: 1.5 }}>
-              Access your saved favorites, bespoke architectural trade quotes, and private collection previews.
-            </p>
-
-            {signInSuccess ? (
+            <div style={{ textAlign: "center", marginBottom: "1.75rem" }}>
               <div
                 style={{
-                  padding: "1rem",
-                  background: "#F0F9F0",
-                  border: "1px solid #A8D8A8",
-                  borderRadius: "6px",
-                  color: "#2D682D",
-                  fontSize: "0.875rem",
-                  textAlign: "center",
+                  width: "48px",
+                  height: "48px",
+                  borderRadius: "50%",
+                  background: "rgba(16, 43, 70, 0.06)",
+                  border: "1px solid var(--color-gold)",
+                  color: "var(--color-gold)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  margin: "0 auto 1rem",
                 }}
               >
-                ✓ Secure link sent. Check your inbox to sign in.
+                📍
               </div>
-            ) : (
-              <form onSubmit={handleSignInSubmit}>
-                <div style={{ marginBottom: "1.25rem" }}>
-                  <label
-                    htmlFor="signin-email"
-                    style={{
-                      display: "block",
-                      fontSize: "0.75rem",
-                      fontWeight: 600,
-                      letterSpacing: "0.08em",
-                      textTransform: "uppercase",
-                      color: "#191919",
-                      marginBottom: "0.4rem",
-                    }}
-                  >
-                    Email Address
-                  </label>
-                  <input
-                    id="signin-email"
-                    type="email"
-                    required
-                    placeholder="architect@studio.com"
-                    value={signInEmail}
-                    onChange={(e) => setSignInEmail(e.target.value)}
-                    style={{
-                      width: "100%",
-                      padding: "0.75rem 1rem",
-                      border: "1px solid #E0E0E0",
-                      borderRadius: "4px",
-                      fontSize: "0.875rem",
-                      outline: "none",
-                    }}
-                  />
-                </div>
 
-                <button
-                  type="submit"
-                  style={{
-                    width: "100%",
-                    padding: "0.85rem",
-                    background: "var(--color-dark)",
-                    color: "#FFFFFF",
-                    border: "none",
-                    borderRadius: "999px",
-                    fontSize: "0.8125rem",
-                    fontWeight: 700,
-                    letterSpacing: "0.1em",
-                    textTransform: "uppercase",
-                    cursor: "pointer",
-                    transition: "background 0.2s ease",
-                  }}
-                  onMouseEnter={(e) => (e.currentTarget.style.background = "var(--color-brass)")}
-                  onMouseLeave={(e) => (e.currentTarget.style.background = "var(--color-dark)")}
-                >
-                  Continue with Email
-                </button>
-              </form>
-            )}
+              <span
+                style={{
+                  fontSize: "0.6875rem",
+                  letterSpacing: "0.16em",
+                  textTransform: "uppercase",
+                  color: "var(--color-gold)",
+                  fontWeight: 700,
+                  display: "block",
+                  marginBottom: "0.25rem",
+                }}
+              >
+                CASABLANCA SOFAS
+              </span>
+
+              <h3
+                style={{
+                  fontFamily: "var(--font-serif)",
+                  fontSize: "1.65rem",
+                  color: "var(--color-navy)",
+                  marginBottom: "0.5rem",
+                }}
+              >
+                Contact & Showroom Visit
+              </h3>
+
+              <p style={{ fontSize: "0.875rem", color: "var(--color-text-secondary)", lineHeight: 1.55 }}>
+                {SHOWROOM_INFO.address}
+              </p>
+              <div style={{ fontSize: "0.8125rem", color: "var(--color-gold)", fontWeight: 600, marginTop: "0.4rem" }}>
+                🕒 {SHOWROOM_INFO.timing}
+              </div>
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+              <a
+                href={getWhatsAppEnquiryUrl("Contact Modal Inquiry")}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-whatsapp"
+                style={{ width: "100%", padding: "0.85rem", justifyContent: "center", borderRadius: "6px" }}
+              >
+                <span>CHAT ON WHATSAPP: {SHOWROOM_INFO.displayWhatsApp}</span>
+              </a>
+
+              <a
+                href={`tel:${SHOWROOM_INFO.phone}`}
+                className="btn-secondary"
+                style={{ width: "100%", padding: "0.85rem", justifyContent: "center", borderRadius: "6px" }}
+              >
+                <span>CALL SHOWROOM: {SHOWROOM_INFO.displayPhone}</span>
+              </a>
+
+              <a
+                href={SHOWROOM_INFO.googleMapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-primary"
+                style={{ width: "100%", padding: "0.85rem", justifyContent: "center", borderRadius: "6px", fontSize: "0.75rem" }}
+              >
+                <span>GET GOOGLE MAP DIRECTIONS</span>
+              </a>
+            </div>
           </div>
         </div>
       )}
 
-      <style jsx>{`
-        @media (max-width: 1180px) {
-          .desktop-left-nav,
-          .desktop-right-nav,
-          .desktop-divider,
-          .desktop-label {
-            display: none !important;
-          }
-          .mobile-only-btn {
-            display: block !important;
-          }
-          .nav-container {
-            grid-template-columns: auto 1fr auto !important;
-          }
-        }
-      `}</style>
+      {/* Responsive styles handled globally in globals.css */}
     </>
   );
 };

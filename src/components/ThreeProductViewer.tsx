@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { CurrencyCode } from "@/types";
-import { CURRENCIES } from "@/data/products";
+import { CURRENCIES, formatPriceINR, formatNumberDeterministic } from "@/data/products";
 
 interface ThreeProductViewerProps {
   currency: CurrencyCode;
@@ -708,28 +708,46 @@ export const ThreeProductViewer: React.FC<ThreeProductViewerProps> = ({
             </div>
 
             {/* Price & Direct Bag Action */}
-            <div style={{ display: "flex", alignItems: "center", gap: "1.5rem" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "1.25rem", flexWrap: "wrap" }}>
               <div style={{ textAlign: "right" }}>
                 <span style={{ fontSize: "0.6875rem", color: "#8E8880", display: "block" }}>
                   CONFIGURED PRICE:
                 </span>
-                <span style={{ fontFamily: "var(--font-sans)", fontSize: "1.375rem", fontWeight: 600 }}>
-                  {curr.symbol}
-                  {Math.round(activeFinish.priceUSD * curr.rate).toLocaleString()}
+                <span suppressHydrationWarning style={{ fontFamily: "var(--font-sans)", fontSize: "1.375rem", fontWeight: 700, color: "var(--color-gold)" }}>
+                  {currency === "INR" ? formatPriceINR(Math.round(activeFinish.priceUSD * 83.5)) : `${curr.symbol}${formatNumberDeterministic(Math.round(activeFinish.priceUSD * curr.rate))}`}
                 </span>
               </div>
+
+              <a
+                href={`https://wa.me/919849012345?text=${encodeURIComponent(
+                  `Hello Casablanca Sofas Kurnool,\nI customized this bespoke piece in your 3D Studio:\nProduct: Plinth Architectural Table\nFinish: ${activeFinish.name}\nEstimated Budget: ${formatPriceINR(Math.round(activeFinish.priceUSD * 83.5))}\nPlease confirm availability and showroom delivery.`
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-whatsapp"
+                style={{
+                  padding: "0.85rem 1.65rem",
+                  fontSize: "0.75rem",
+                  borderRadius: "999px",
+                  fontWeight: 700,
+                }}
+              >
+                <span>ENQUIRE ON WHATSAPP</span>
+              </a>
 
               <button
                 onClick={handleAddPiece}
                 className="btn-primary"
                 style={{
-                  background: addedToast ? "var(--color-brass)" : "#FFFFFF",
-                  color: addedToast ? "#FFFFFF" : "var(--color-dark)",
-                  padding: "0.85rem 1.75rem",
+                  background: addedToast ? "var(--color-gold)" : "#FFFFFF",
+                  color: addedToast ? "#FFFFFF" : "var(--color-navy)",
+                  padding: "0.85rem 1.65rem",
                   fontSize: "0.75rem",
+                  borderRadius: "999px",
+                  fontWeight: 700,
                 }}
               >
-                {addedToast ? "ADDED TO BAG ✓" : "ACQUIRE THIS 3D CONFIGURATION"}
+                {addedToast ? "SAVED TO BAG ✓" : "SAVE CONFIGURATION"}
               </button>
             </div>
           </div>

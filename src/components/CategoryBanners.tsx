@@ -1,42 +1,292 @@
 "use client";
 
-import React from "react";
+import React, { useRef, useState } from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import {
+  motion,
+  useScroll,
+  useTransform,
+  useSpring,
+  useMotionValue,
+  MotionValue,
+} from "framer-motion";
 import { FilterCategory } from "./CategoryFilter";
 
 interface CategoryBannersProps {
   onSelectCategory: (cat: FilterCategory) => void;
 }
 
+interface BannerItem {
+  id: string;
+  category: FilterCategory;
+  slug: string;
+  number: string;
+  title: string;
+  subtitle: string;
+  image: string;
+  tag: string;
+}
+
+// -------------------------------------------------------------
+// INDIVIDUAL PARALLAX CATEGORY CARD COMPONENT
+// Layered movement: outer card float + inner image glide + 3D tilt
+// -------------------------------------------------------------
+const ParallaxCategoryCard: React.FC<{
+  banner: BannerItem;
+  index: number;
+  sectionProgress: MotionValue<number>;
+  onClick: (cat: FilterCategory) => void;
+}> = ({ banner, index, sectionProgress, onClick }) => {
+  const [isHovered, setIsHovered] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  // 1. Multi-speed column parallax offsets (staggered depths)
+  const yOffsets = [
+    [-32, 32],  // Column 1 (Sofas): gentle drift
+    [48, -48],  // Column 2 (Recliners): counter-speed drift
+    [-24, 24],  // Column 3 (Beds): moderate drift
+    [56, -56],  // Column 4 (Dining): elevated dynamic speed
+  ];
+  const [startOffset, endOffset] = yOffsets[index % 4];
+
+  const rawCardY = useTransform(sectionProgress, [0, 1], [startOffset, endOffset]);
+  const cardY = useSpring(rawCardY, { damping: 26, stiffness: 190 });
+
+  // 2. Layered image parallax inside the card frame
+  const rawImgY = useTransform(sectionProgress, [0, 1], ["-12%", "12%"]);
+  const imgY = useSpring(rawImgY, { damping: 26, stiffness: 190 });
+
+  // 3. Foreground content counter-drift for enhanced 3D stereoscopic depth
+  const rawContentY = useTransform(sectionProgress, [0, 1], [10, -10]);
+  const contentY = useSpring(rawContentY, { damping: 26, stiffness: 190 });
+
+  // 4. Scroll-based secondary image transition (subtle cross-fade past scroll midpoint)
+  const scrollSecondaryOpacity = useTransform(
+    sectionProgress,
+    [0.32, 0.52, 0.72],
+    [0, 0.88, 0]
+  );
+
+  // 5. Tactile 3D mouse tilt physics
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  const mouseXSpring = useSpring(mouseX, { damping: 22, stiffness: 240 });
+  const mouseYSpring = useSpring(mouseY, { damping: 22, stiffness: 240 });
+  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["7deg", "-7deg"]);
+  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-7deg", "7deg"]);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    mouseX.set((e.clientX - rect.left) / rect.width - 0.5);
+    mouseY.set((e.clientY - rect.top) / rect.height - 0.5);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    mouseX.set(0);
+    mouseY.set(0);
+  };
+
+  return (
+    <motion.div
+      style={{
+        y: cardY,
+        willChange: "transform",
+      }}
+      className="category-parallax-card-wrapper"
+    >
+      <div
+        ref={cardRef}
+        onMouseMove={handleMouseMove}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={handleMouseLeave}
+        onClick={() => onClick(banner.category)}
+        style={{
+          perspective: "1000px",
+          cursor: "pointer",
+          height: "460px",
+          width: "100%",
+        }}
+        className="category-card-perspective"
+      >
+        <motion.div
+          style={{
+            rotateX: isHovered ? rotateX : 0,
+            rotateY: isHovered ? rotateY : 0,
+            transformStyle: "preserve-3d",
+            position: "relative",
+            width: "100%",
+            height: "100%",
+            borderRadius: "6px",
+            overflow: "hidden",
+            boxShadow: isHovered
+              ? "0 28px 60px rgba(10, 25, 42, 0.38), 0 0 0 1px rgba(197, 164, 93, 0.45)"
+              : "0 10px 30px rgba(10, 25, 42, 0.16)",
+            transition: "box-shadow 0.4s ease",
+          }}
+          className="category-parallax-card"
+        >
+          {/* =========================================================
+              LAYER 1: PARALLAX BACKGROUND IMAGES (MULTI-SPEED DRIFT)
+             ========================================================= */}
+          <motion.div
+            style={{
+              position: "absolute",
+              inset: "-16% 0", // Extra vertical margin allows smooth internal gliding
+              y: imgY,
+              willChange: "transform",
+            }}
+            className="category-img-parallax-container"
+          >
+            {/* Unique Architectural Image with hover scale */}
+            <motion.div
+              style={{
+                position: "absolute",
+                inset: 0,
+                scale: isHovered ? 1.08 : 1,
+                transition: "scale 0.7s cubic-bezier(0.16, 1, 0.3, 1)",
+              }}
+            >
+              <Image
+                src={banner.image}
+                alt={banner.title}
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                style={{ objectFit: "cover", objectPosition: "center" }}
+              />
+            </motion.div>
+          </motion.div>
+
+          {/* =========================================================
+              LAYER 2: VIGNETTES & GLOW
+             ========================================================= */}
+          {/* Deep Architectural Bottom Vignette */}
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              background:
+                "linear-gradient(180deg, rgba(16, 43, 70, 0.08) 0%, transparent 35%, rgba(10, 25, 42, 0.45) 65%, rgba(10, 25, 42, 0.94) 100%)",
+              zIndex: 1,
+              pointerEvents: "none",
+            }}
+          />
+
+          {/* Golden Ambient Corner Glow on Hover */}
+          <motion.div
+            style={{
+              position: "absolute",
+              inset: 0,
+              background:
+                "radial-gradient(circle at 50% 100%, rgba(197, 164, 93, 0.25) 0%, transparent 60%)",
+              opacity: isHovered ? 1 : 0,
+              transition: "opacity 0.4s ease",
+              zIndex: 1,
+              pointerEvents: "none",
+            }}
+          />
+
+
+
+          {/* =========================================================
+              LAYER 4: FOREGROUND CONTENT (WITH COUNTER-DRIFT PARALLAX)
+             ========================================================= */}
+          <motion.div
+            style={{
+              position: "absolute",
+              bottom: "1.75rem",
+              left: "1.5rem",
+              right: "1.5rem",
+              zIndex: 2,
+              y: contentY,
+            }}
+            className="category-card-content"
+          >
+            <h3
+              style={{
+                fontFamily: '"Marcellus", var(--font-serif)',
+                fontSize: "1.5rem",
+                color: "#FFFFFF",
+                lineHeight: 1.2,
+                marginBottom: "0.65rem",
+                fontWeight: 400,
+                letterSpacing: "-0.01em",
+                textShadow: "0 2px 10px rgba(0, 0, 0, 0.4)",
+              }}
+            >
+              {banner.title}
+            </h3>
+
+            <div
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "0.5rem",
+                fontSize: "0.6875rem",
+                letterSpacing: "0.16em",
+                textTransform: "uppercase",
+                color: "var(--color-gold)",
+                fontWeight: 700,
+                transition: "transform 0.25s ease, color 0.25s ease",
+                transform: isHovered ? "translateX(4px)" : "translateX(0)",
+              }}
+            >
+              <span>EXPLORE COLLECTION</span>
+              <span
+                style={{
+                  display: "inline-block",
+                  transition: "transform 0.25s ease",
+                  transform: isHovered ? "translateX(4px)" : "translateX(0)",
+                }}
+              >
+                →
+              </span>
+            </div>
+          </motion.div>
+        </motion.div>
+      </div>
+    </motion.div>
+  );
+};
+
 export const CategoryBanners: React.FC<CategoryBannersProps> = ({ onSelectCategory }) => {
-  const banners = [
+  const sectionRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+
+  const banners: BannerItem[] = [
     {
-      id: "furniture",
-      category: "furniture" as FilterCategory,
+      id: "sofas",
+      category: "sofas" as FilterCategory,
+      slug: "/sofas-kurnool",
       number: "01",
-      title: "Living Architecture",
-      subtitle: "Monolithic Plinths, Bouclé Lounges & Sculpted Oak",
-      image: "/images/eave-sofa.jpg",
-      tag: "18 PIECES",
+      title: "Curved & Modular Sofas",
+      subtitle: "Tactile Bouclé Upholstery & Bespoke Living Room Layouts",
+      image: "/images/mf-curved-modular-sofa.jpg",
+      tag: "24 DESIGNS",
     },
     {
-      id: "lighting",
-      category: "lighting" as FilterCategory,
+      id: "dining",
+      category: "dining" as FilterCategory,
+      slug: "/dining-tables-kurnool",
       number: "02",
-      title: "Atmospheric Light",
-      subtitle: "Translucent Washi Lanterns & Cast Brass Pendants",
-      image: "/images/hashira-lamp.jpg",
-      tag: "12 FIXTURES",
+      title: "Italian Marble & Teak Dining",
+      subtitle: "Natural Polished Marble Tops on Fluted Burma Teak Pedestals",
+      image: "/images/mf-marble-dual-living.jpg",
+      tag: "18 SUITES",
     },
     {
-      id: "objects",
-      category: "objects" as FilterCategory,
+      id: "beds",
+      category: "beds" as FilterCategory,
+      slug: "/beds-cots-kurnool",
       number: "03",
-      title: "Objects & Vessels",
-      subtitle: "Mouth-Blown Smoked Glass & Honed Pedestals",
-      image: "/images/echasse-vase.jpg",
-      tag: "24 CREATIONS",
+      title: "Heirloom Teakwood Suites",
+      subtitle: "Solid Seasoned Burma Teak Beds & Architectural Casegoods",
+      image: "/images/Analysis output 3.png",
+      tag: "28 HEIRLOOMS",
     },
   ];
 
@@ -51,10 +301,12 @@ export const CategoryBanners: React.FC<CategoryBannersProps> = ({ onSelectCatego
   return (
     <section
       id="disciplines"
+      ref={sectionRef}
       style={{
-        padding: "4.5rem 0 5rem",
+        padding: "5.5rem 0 6.5rem",
         backgroundColor: "var(--color-canvas)",
         borderBottom: "1px solid var(--color-card-border)",
+        overflow: "hidden", // Prevents vertical drift from overflowing the viewport
       }}
     >
       <div className="container">
@@ -66,8 +318,9 @@ export const CategoryBanners: React.FC<CategoryBannersProps> = ({ onSelectCatego
             alignItems: "flex-end",
             flexWrap: "wrap",
             gap: "1.5rem",
-            marginBottom: "2.5rem",
+            marginBottom: "3rem",
           }}
+          className="category-banners-header"
         >
           <div>
             <span
@@ -75,185 +328,66 @@ export const CategoryBanners: React.FC<CategoryBannersProps> = ({ onSelectCatego
                 fontSize: "0.6875rem",
                 letterSpacing: "0.22em",
                 textTransform: "uppercase",
-                fontWeight: 600,
-                color: "var(--color-brass)",
+                fontWeight: 700,
+                color: "var(--color-gold)",
                 display: "block",
                 marginBottom: "0.5rem",
               }}
             >
-              ARCHITECTURAL DISCIPLINES
+              SHOP BY CATEGORY · KURNOOL SHOWROOM
             </span>
             <h2
               style={{
                 fontFamily: "var(--font-serif)",
-                fontSize: "clamp(1.875rem, 3.5vw, 2.75rem)",
+                fontSize: "clamp(2rem, 3.8vw, 3rem)",
                 fontWeight: 300,
                 lineHeight: 1.15,
+                color: "var(--color-navy)",
               }}
             >
-              Curated by <span style={{ fontStyle: "italic" }}>Spatial Function</span>
+              Find Your <span style={{ fontStyle: "italic", color: "var(--color-gold)" }}>Perfect Furniture</span>
             </h2>
+            <p
+              style={{
+                color: "var(--color-text-secondary)",
+                fontSize: "1rem",
+                fontWeight: 300,
+                marginTop: "0.5rem",
+                lineHeight: 1.5,
+              }}
+            >
+              Explore our collections for every room in your home.
+            </p>
           </div>
 
           <a
             href="#collection"
             className="btn-ghost"
-            style={{ fontSize: "0.75rem", letterSpacing: "0.14em" }}
+            style={{ fontSize: "0.75rem", letterSpacing: "0.14em", color: "var(--color-navy)" }}
           >
-            VIEW ALL DISCIPLINES →
+            EXPLORE COLLECTION →
           </a>
         </div>
 
-        {/* 3 Banners Grid */}
+        {/* 3 Cards Parallax Grid matching screenshot */}
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
-            gap: "2rem",
+            gridTemplateColumns: "repeat(3, 1fr)",
+            gap: "1.75rem",
+            paddingTop: "1.5rem",
+            paddingBottom: "1.5rem",
           }}
+          className="category-parallax-grid"
         >
           {banners.map((b, idx) => (
-            <motion.div
+            <ParallaxCategoryCard
               key={b.id}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: idx * 0.15, ease: [0.16, 1, 0.3, 1] }}
-              onClick={() => handleBannerClick(b.category)}
-              style={{
-                position: "relative",
-                height: "460px",
-                overflow: "hidden",
-                cursor: "pointer",
-                borderRadius: "2px",
-                boxShadow: "var(--shadow-sm)",
-              }}
-              whileHover="hover"
-            >
-              {/* Background Image with Hover Scale */}
-              <motion.div
-                variants={{
-                  hover: { scale: 1.07 },
-                }}
-                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                style={{
-                  position: "absolute",
-                  inset: 0,
-                  width: "100%",
-                  height: "100%",
-                }}
-              >
-                <Image
-                  src={b.image}
-                  alt={b.title}
-                  fill
-                  sizes="(max-width: 768px) 100vw, 33vw"
-                  style={{ objectFit: "cover" }}
-                />
-              </motion.div>
-
-              {/* Gradient Vignette for Readability */}
-              <div
-                style={{
-                  position: "absolute",
-                  inset: 0,
-                  background:
-                    "linear-gradient(180deg, rgba(22, 21, 20, 0.15) 0%, rgba(22, 21, 20, 0.4) 50%, rgba(22, 21, 20, 0.88) 100%)",
-                }}
-              />
-
-              {/* Number and Tag Top Bar */}
-              <div
-                style={{
-                  position: "absolute",
-                  top: "1.75rem",
-                  left: "1.75rem",
-                  right: "1.75rem",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  zIndex: 2,
-                }}
-              >
-                <span
-                  style={{
-                    fontFamily: "var(--font-serif)",
-                    fontSize: "1.5rem",
-                    color: "rgba(255, 255, 255, 0.9)",
-                    fontWeight: 300,
-                  }}
-                >
-                  {b.number}
-                </span>
-
-                <span
-                  style={{
-                    fontSize: "0.625rem",
-                    letterSpacing: "0.16em",
-                    textTransform: "uppercase",
-                    color: "var(--color-brass)",
-                    background: "rgba(22, 21, 20, 0.75)",
-                    backdropFilter: "blur(6px)",
-                    padding: "0.25rem 0.65rem",
-                    borderRadius: "2px",
-                    fontWeight: 600,
-                  }}
-                >
-                  {b.tag}
-                </span>
-              </div>
-
-              {/* Bottom Content */}
-              <div
-                style={{
-                  position: "absolute",
-                  bottom: "2rem",
-                  left: "1.75rem",
-                  right: "1.75rem",
-                  zIndex: 2,
-                }}
-              >
-                <h3
-                  style={{
-                    fontFamily: "var(--font-serif)",
-                    fontSize: "1.875rem",
-                    color: "#FFFFFF",
-                    lineHeight: 1.15,
-                    marginBottom: "0.4rem",
-                  }}
-                >
-                  {b.title}
-                </h3>
-
-                <p
-                  style={{
-                    fontSize: "0.8125rem",
-                    color: "rgba(255, 255, 255, 0.78)",
-                    lineHeight: 1.5,
-                    marginBottom: "1.25rem",
-                    fontWeight: 300,
-                  }}
-                >
-                  {b.subtitle}
-                </p>
-
-                <div
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: "0.5rem",
-                    fontSize: "0.6875rem",
-                    letterSpacing: "0.16em",
-                    textTransform: "uppercase",
-                    color: "var(--color-brass)",
-                    fontWeight: 600,
-                  }}
-                >
-                  <span>EXPLORE DISCIPLINE</span>
-                  <span>→</span>
-                </div>
-              </div>
-            </motion.div>
+              banner={b}
+              index={idx}
+              sectionProgress={scrollYProgress}
+              onClick={handleBannerClick}
+            />
           ))}
         </div>
       </div>

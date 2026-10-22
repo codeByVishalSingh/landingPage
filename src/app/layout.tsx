@@ -1,26 +1,48 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { SHOWROOM_INFO } from "@/data/products";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://audocph.com"),
-  title: "AUDO Copenhagen — Soft Minimalism, Architectural Furniture & Lighting",
-  description: "Explore AUDO Copenhagen's iconic Scandinavian furniture, architectural lighting, and tactile design objects. Crafted for quiet luxury, tactile living, and modern spaces.",
-  keywords: ["Audo Copenhagen", "Scandinavian design", "luxury furniture", "architectural lighting", "soft minimalism", "Danish modern", "The Tired Man", "Plinth table"],
+  metadataBase: new URL("https://casablancasofas.com"),
+  title: "Casablanca Sofas | Premium Furniture & Living Solutions",
+  description:
+    "Explore luxury sofas, dining tables, cots, curtains, and mattresses at Casablanca Sofas. Browse our collection and enquire on WhatsApp.",
+  keywords: [
+    "Casablanca Sofas",
+    "Luxury sofas",
+    "Motorized recliners",
+    "Teak wood beds",
+    "Marble dining tables",
+    "Curtains and blinds",
+    "Premium furniture solutions",
+  ],
   openGraph: {
-    title: "AUDO Copenhagen — Soft Minimalism & Architectural Design",
-    description: "Discover curated Danish furniture, lighting, and home objects crafted to connect people and spaces.",
-    url: "https://audocph.com",
-    siteName: "AUDO Copenhagen",
+    title: "Casablanca Sofas | Premium Furniture & Living Solutions",
+    description:
+      "Explore luxury sofas, dining tables, cots, curtains, and mattresses at Casablanca Sofas.",
+    url: "https://casablancasofas.com",
+    siteName: "Casablanca Sofas",
     images: [
       {
-        url: "/images/hero.jpg",
-        width: 1920,
-        height: 1080,
-        alt: "AUDO Copenhagen Architectural Living Space",
+        url: "/og.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Casablanca Sofas Kurnool Luxury Living Room",
       },
     ],
-    locale: "en_US",
+    locale: "en_IN",
     type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Casablanca Sofas | Premium Furniture & Living Solutions",
+    description:
+      "Explore luxury sofas, motorized recliners, solid teakwood beds and Italian marble dining suites at Casablanca Sofas.",
+    images: ["/og.jpg"],
+  },
+  icons: {
+    icon: "/images/casablanca-logo.png",
+    apple: "/images/casablanca-logo.png",
   },
 };
 
@@ -29,11 +51,57 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // LocalBusiness structured data for Kurnool Local SEO (Section 8 Brief)
+  const localBusinessSchema = {
+    "@context": "https://schema.org",
+    "@type": "FurnitureStore",
+    name: SHOWROOM_INFO.brandName,
+    alternateName: "Casablanca Sofas Kurnool",
+    image: "https://casablancasofas.com/og.jpg",
+    telephone: SHOWROOM_INFO.phone,
+    email: SHOWROOM_INFO.email,
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: "Near RTC Bus Stand, Bellary Road, Opp. Collectorate Office Road",
+      addressLocality: "Kurnool",
+      addressRegion: "Andhra Pradesh",
+      postalCode: "518004",
+      addressCountry: "IN",
+    },
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: 15.8281,
+      longitude: 78.0373,
+    },
+    openingHoursSpecification: [
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+          "Sunday",
+        ],
+        opens: "10:00",
+        closes: "21:00",
+      },
+    ],
+    priceRange: "₹₹₹",
+    url: "https://casablancasofas.com",
+  };
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }}
+        />
       </head>
       <body suppressHydrationWarning>{children}</body>
     </html>

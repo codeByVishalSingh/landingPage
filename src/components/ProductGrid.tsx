@@ -47,18 +47,18 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.12,
+        staggerChildren: 0.08,
       },
     },
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 35 },
+    hidden: { opacity: 0, y: 25 },
     visible: {
       opacity: 1,
       y: 0,
       transition: {
-        duration: 0.6,
+        duration: 0.5,
         ease: [0.16, 1, 0.3, 1] as [number, number, number, number],
       },
     },
@@ -67,18 +67,31 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
   return (
     <motion.div
       id="product-grid"
+      className="catalogue-3col-grid"
       variants={containerVariants}
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, margin: "-50px" }}
       style={{
         display: "grid",
-        gridTemplateColumns: "repeat(auto-fill, minmax(360px, 1fr))",
+        gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
         gap: "2.5rem 2rem",
+        alignItems: "stretch",
+        position: "relative",
+        zIndex: 2,
       }}
     >
       {products.map((product) => (
-        <motion.div key={product.id} variants={itemVariants}>
+        <motion.div
+          key={product.id}
+          variants={itemVariants}
+          style={{
+            height: "100%",
+            display: "flex",
+            flexDirection: "column",
+            width: "100%",
+          }}
+        >
           <ProductCard3D
             product={product}
             currency={currency}
@@ -92,3 +105,4 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
     </motion.div>
   );
 };
+

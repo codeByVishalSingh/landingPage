@@ -1,35 +1,48 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&family=Marcellus&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
   --font-serif: 'Cormorant Garamond', Georgia, serif;
   --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
-  /* Color Palette */
-  --color-canvas: #FAF8F5;
-  --color-canvas-alt: #F3EFE9;
+  /* Casablanca Sofas Brand Colour Palette */
+  --color-navy: #102B46;
+  --color-gold: #C5A45D;
+  --color-gold-hover: #b08f48;
+  --color-ivory: #F7F3EA;
+  --color-charcoal: #252B30;
+  --color-whatsapp: #18864B;
+  --color-whatsapp-hover: #136e3d;
+
+  /* Theme mappings adhering to luxury minimalist aesthetics */
+  --color-canvas: #F7F3EA;
+  --color-canvas-alt: #EFE9DD;
   --color-card: #FFFFFF;
-  --color-card-border: rgba(28, 26, 24, 0.08);
+  --color-card-border: rgba(16, 43, 70, 0.08);
   
-  --color-text-main: #1C1A18;
-  --color-text-secondary: #5C5852;
-  --color-text-muted: #8E8880;
-  --color-text-inverted: #FAF8F5;
+  --color-text-main: #252B30;
+  --color-text-secondary: #575D65;
+  --color-text-muted: #848B94;
+  --color-text-inverted: #F7F3EA;
 
-  --color-dark: #161514;
-  --color-dark-card: #201E1C;
-  --color-dark-border: rgba(255, 255, 255, 0.12);
+  --color-dark: #102B46;
+  --color-dark-card: #0c2136;
+  --color-dark-border: rgba(197, 164, 93, 0.2);
 
-  --color-brass: #B69269;
-  --color-brass-hover: #9E7B54;
-  --color-sand: #D9D2C5;
-  --color-stone: #A89F93;
+  --color-brass: #C5A45D;
+  --color-brass-hover: #B08F48;
+  --color-sand: #E5DEC9;
+  --color-stone: #A39D93;
   --color-terracotta: #A46955;
 
   /* Shadows */
-  --shadow-sm: 0 2px 10px rgba(28, 26, 24, 0.04);
-  --shadow-md: 0 10px 30px rgba(28, 26, 24, 0.07);
-  --shadow-lg: 0 20px 50px rgba(28, 26, 24, 0.12);
-  --shadow-drawer: -12px 0 45px rgba(0, 0, 0, 0.18);
+  --shadow-sm: 0 2px 10px rgba(16, 43, 70, 0.04);
+  --shadow-md: 0 10px 30px rgba(16, 43, 70, 0.08);
+  --shadow-lg: 0 20px 50px rgba(16, 43, 70, 0.14);
+  --shadow-drawer: -12px 0 45px rgba(16, 43, 70, 0.22);
 
   /* Transitions */
   --transition-fast: 0.2s cubic-bezier(0.16, 1, 0.3, 1);
@@ -58,7 +71,7 @@ html {
 
 body {
   min-height: 100vh;
-  overflow-x: hidden;
+  overflow-x: clip;
   background-color: var(--color-canvas);
   color: var(--color-text-main);
   line-height: 1.6;
@@ -291,3 +304,998 @@ h1, h2, h3, h4, .font-serif {
   background: var(--color-brass);
   transform: scale(1.18);
 }
+
+/* WhatsApp CTA Button */
+.btn-whatsapp {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  background-color: var(--color-whatsapp);
+  color: #FFFFFF;
+  border: 1px solid var(--color-whatsapp);
+  padding: 0.75rem 1.4rem;
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all var(--transition-fast);
+  box-shadow: 0 4px 14px rgba(24, 134, 75, 0.25);
+}
+
+.btn-whatsapp:hover {
+  background-color: var(--color-whatsapp-hover);
+  border-color: var(--color-whatsapp-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(24, 134, 75, 0.35);
+}
+
+/* Floating WhatsApp badge */
+.floating-whatsapp {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 99;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background-color: var(--color-whatsapp);
+  color: #FFFFFF;
+  padding: 0.85rem 1.35rem;
+  border-radius: 999px;
+  box-shadow: 0 10px 30px rgba(24, 134, 75, 0.4);
+  cursor: pointer;
+  text-decoration: none;
+  transition: all var(--transition-normal);
+}
+
+.floating-whatsapp:hover {
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: 0 16px 36px rgba(24, 134, 75, 0.5);
+}
+
+/* Casablanca Brand Logo (Exact replication from reference site) */
+.brand-logo {
+  aspect-ratio: 5674 / 2820;
+  height: 48px;
+  display: block;
+  position: relative;
+  flex-shrink: 0;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.brand-logo:hover {
+  opacity: 0.92;
+  transform: scale(1.02);
+}
+
+.brand-logo__ring,
+.brand-logo__ink {
+  position: absolute;
+  inset: 0;
+  -webkit-mask-position: 50%;
+  mask-position: 50%;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+
+:root {
+  --mask-logo-ring: url(/images/logo-mask-ring.png);
+  --mask-logo-ink: url(/images/logo-mask-ink.png);
+}
+
+.brand-logo__ring {
+  background-color: #c8b89a;
+  -webkit-mask-image: var(--mask-logo-ring);
+  mask-image: var(--mask-logo-ring);
+}
+
+.brand-logo__ink {
+  background-color: #ffffff;
+  transition: background-color 0.3s ease;
+  -webkit-mask-image: var(--mask-logo-ink);
+  mask-image: var(--mask-logo-ink);
+}
+
+/* =========================================================
+   RESPONSIVE & MOBILE NAVIGATION STYLES
+   ========================================================= */
+
+/* Header Inner Layout: Absolute Center Navigation for perfect mathematical symmetry */
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  width: 100%;
+  padding: 0.85rem 3.5rem;
+  transition: padding 0.25s ease, min-height 0.25s ease;
+  min-height: 96px;
+}
+
+.main-header.is-scrolled .header-inner {
+  padding: 0.6rem 3.5rem;
+  min-height: 82px;
+}
+
+.header-brand-wrap {
+  display: flex;
+  align-items: center;
+  z-index: 2;
+  position: relative;
+}
+
+/* Brand logo sizing with prominent prestige presence */
+.header-brand-wrap .brand-logo-container {
+  --brand-logo-height: 88px;
+  --brand-logo-width: 177px;
+  height: var(--brand-logo-height);
+  width: var(--brand-logo-width);
+  transition: all 0.25s ease;
+}
+
+.main-header.is-scrolled .header-brand-wrap .brand-logo-container {
+  --brand-logo-height: 74px;
+  --brand-logo-width: 149px;
+}
+
+/* Perfectly center-aligned navigation links: Home, Shop, Collections, Our Showroom, Offers, Contact */
+.desktop-nav-links {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2.25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  white-space: nowrap;
+  z-index: 1;
+  pointer-events: auto;
+}
+
+.desktop-nav-links a,
+.desktop-nav-links button {
+  font-family: var(--font-serif) !important;
+  font-size: 1.125rem !important;
+  color: #FAF8F5 !important;
+  text-decoration: none !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.02em !important;
+  transition: color 0.2s ease, transform 0.2s ease !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  background: transparent !important;
+  border: none !important;
+  cursor: pointer !important;
+  padding: 0.25rem 0 !important;
+}
+
+.desktop-nav-links a:hover,
+.desktop-nav-links button:hover {
+  color: var(--color-gold) !important;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1.15rem;
+  z-index: 2;
+  position: relative;
+}
+
+.mobile-hamburger {
+  display: none;
+}
+
+@media (max-width: 1366px) {
+  .header-inner {
+    padding: 0.75rem 2.25rem !important;
+  }
+  .desktop-nav-links {
+    gap: 1.75rem !important;
+  }
+  .desktop-nav-links a,
+  .desktop-nav-links button {
+    font-size: 1.0625rem !important;
+  }
+}
+
+@media (max-width: 1220px) {
+  .header-inner {
+    padding: 0.7rem 1.5rem !important;
+  }
+  .header-brand-wrap .brand-logo-container {
+    --brand-logo-height: 74px !important;
+    --brand-logo-width: 149px !important;
+  }
+  .desktop-nav-links {
+    gap: 1.35rem !important;
+  }
+  .desktop-nav-links a,
+  .desktop-nav-links button {
+    font-size: 1rem !important;
+  }
+  .desktop-whatsapp-action span {
+    display: none; /* Keep center nav balanced without crowding on smaller laptops */
+  }
+  .desktop-whatsapp-action {
+    padding: 0.6rem !important;
+    border-radius: 50% !important;
+    width: 38px !important;
+    height: 38px !important;
+    justify-content: center !important;
+  }
+}
+
+@media (max-width: 1060px) {
+  .header-inner {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 0.75rem 1.5rem !important;
+    min-height: 78px !important;
+  }
+  
+  .header-brand-wrap .brand-logo-container {
+    --brand-logo-height: 64px !important;
+    --brand-logo-width: 129px !important;
+  }
+  
+  .desktop-nav-links {
+    display: none !important;
+  }
+  
+  .mobile-hamburger {
+    display: flex !important;
+  }
+  
+  #header-whatsapp-cta,
+  .desktop-whatsapp-action {
+    display: none !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .header-inner {
+    padding: 0.6rem 1.15rem !important;
+    min-height: 72px !important;
+  }
+
+  .header-brand-wrap .brand-logo-container {
+    --brand-logo-height: 56px !important;
+    --brand-logo-width: 113px !important;
+  }
+
+  .header-actions {
+    gap: 0.75rem !important;
+  }
+}
+
+@media (max-width: 400px) {
+  .header-brand-wrap .brand-logo-container {
+    --brand-logo-height: 50px !important;
+    --brand-logo-width: 101px !important;
+  }
+}
+
+
+/* ==========================================================================
+   Hero Section Base & Responsive Styles
+   ========================================================================== */
+.hero-section {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  overflow: hidden;
+  background-color: #0c1a29;
+  color: #FAF8F5;
+}
+
+.hero-video-wrapper {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.hero-video-element {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.hero-video-desktop {
+  display: block;
+}
+
+.hero-video-mobile {
+  display: none !important;
+}
+
+.hero-video-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0.18) 35%, transparent 65%);
+  pointer-events: none;
+}
+
+.hero-content-container {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 7.5rem 2.5rem 4rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.hero-text-block {
+  max-width: 560px;
+}
+
+.hero-title {
+  font-family: 'Marcellus', var(--font-serif);
+  font-size: clamp(2.125rem, 3.2vw, 2.75rem);
+  line-height: 1.15;
+  font-weight: 300;
+  color: #FFFFFF;
+  letter-spacing: -0.01em;
+  margin-bottom: 1rem;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.5);
+}
+
+.hero-subtitle {
+  font-size: clamp(0.875rem, 1vw, 0.9375rem);
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.88);
+  max-width: 500px;
+  margin-bottom: 2.25rem;
+  font-weight: 300;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.45);
+}
+
+.hero-cta-group {
+  display: flex;
+  gap: 1.25rem;
+  align-items: center;
+}
+
+.hero-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.85rem 2.5rem;
+  border-radius: 999px;
+  border: 1.25px solid rgba(255, 255, 255, 0.8);
+  background-color: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(6px);
+  color: #FFFFFF;
+  font-size: 0.8125rem;
+  letter-spacing: 0.16em;
+  font-weight: 600;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: all 0.25s ease;
+}
+
+.hero-cta-btn:hover {
+  background-color: #FFFFFF;
+  color: #102B46;
+  border-color: #FFFFFF;
+  transform: translateY(-2px);
+}
+
+/* Tablet Range (769px to 1024px) */
+@media (max-width: 1024px) and (min-width: 769px) {
+  .hero-section {
+    min-height: 85vh;
+    height: 85vh;
+  }
+
+  .hero-content-container {
+    padding: 6.5rem 2rem 3rem;
+  }
+}
+
+/* Mobile Devices (<= 768px): Uses 9:16 portrait vertical video story.mp4 */
+@media (max-width: 768px) {
+  .hero-section {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+    height: 100vh;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-start;
+    background-color: #0c1a29;
+    padding-top: 0;
+    overflow: hidden;
+  }
+
+  .hero-video-wrapper {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: #000;
+  }
+
+  .hero-video-desktop {
+    display: none !important;
+  }
+
+  .hero-video-mobile {
+    display: block !important;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  /* Gradient overlay: clear view at top, subtle darkening towards the lower third for crystal clear text */
+  .hero-video-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.35) 0%,
+      rgba(0, 0, 0, 0.05) 30%,
+      rgba(12, 26, 41, 0.5) 60%,
+      rgba(12, 26, 41, 0.88) 100%
+    );
+    pointer-events: none;
+  }
+
+  .hero-content-container {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    padding: 2rem 1.5rem 3.5rem;
+    background: transparent;
+  }
+
+  .hero-text-block {
+    max-width: 100%;
+  }
+
+  .hero-title {
+    font-size: clamp(1.85rem, 8vw, 2.35rem);
+    line-height: 1.15;
+    margin-bottom: 0.85rem;
+    text-shadow: 0 2px 18px rgba(0, 0, 0, 0.7);
+  }
+
+  .hero-subtitle {
+    font-size: 0.875rem;
+    line-height: 1.55;
+    margin-bottom: 1.75rem;
+    max-width: 100%;
+    text-shadow: 0 1px 12px rgba(0, 0, 0, 0.6);
+  }
+
+  .hero-cta-btn {
+    padding: 0.8rem 2.25rem;
+    font-size: 0.78125rem;
+    background-color: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(8px);
+    border: 1.25px solid rgba(255, 255, 255, 0.85);
+  }
+}
+
+/* Category Cards Responsive Adjustments */
+@media (max-width: 768px) {
+  #disciplines {
+    padding: 3rem 0 3.5rem !important;
+  }
+}
+
+/* Product Grid 3-Column Luxury Responsiveness */
+#product-grid,
+.catalogue-3col-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 2.5rem 2rem !important;
+  align-items: stretch !important;
+}
+
+@media (max-width: 1024px) {
+  #product-grid,
+  .catalogue-3col-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 2rem 1.5rem !important;
+    align-items: stretch !important;
+  }
+}
+
+@media (max-width: 640px) {
+  #product-grid,
+  .catalogue-3col-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.75rem !important;
+  }
+  
+  #collection {
+    padding: 3.5rem 0 4rem !important;
+  }
+}
+
+/* Floating WhatsApp Mobile Adjustments */
+@media (max-width: 600px) {
+  .floating-whatsapp-container {
+    bottom: 1.25rem !important;
+    right: 1.25rem !important;
+  }
+}
+
+/* =========================================================================
+   AUDO 3D Redesign Styles & Responsive Rules
+   ========================================================================= */
+
+/* 1. Signature 3-Column Audo Stage */
+.audo-stage-container {
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.audo-stage-container:hover {
+  box-shadow: 0 30px 80px rgba(16, 43, 70, 0.09);
+}
+
+.audo-card-col {
+  transition: background-color 0.25s ease;
+}
+
+@media (max-width: 992px) {
+  .audo-stage-container {
+    padding: 2rem 1.5rem !important;
+    border-radius: 20px !important;
+  }
+
+  .audo-stage-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 1.5rem !important;
+  }
+
+  .audo-card-col {
+    border-right: none !important;
+    border: 1px solid #ECEAE5 !important;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+}
+
+@media (max-width: 640px) {
+  #audo-product-stage {
+    padding: 3rem 0 3.5rem !important;
+  }
+
+  .audo-stage-container {
+    padding: 1.5rem 1rem !important;
+    border-radius: 16px !important;
+  }
+
+  .audo-stage-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.75rem !important;
+  }
+
+  .audo-card-col {
+    border-right: none !important;
+    border: 1px solid #ECEAE5 !important;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+}
+
+/* 2. Atmosphere Parallax & 3D Floating Product Sections */
+.atmosphere-block {
+  width: 100% !important;
+  max-width: 100% !important;
+  border-radius: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.atmosphere-sticky-wrap {
+  width: 100% !important;
+  height: 100vh !important;
+  height: 100svh !important;
+  min-height: 100vh !important;
+  max-height: none !important;
+  top: 0 !important;
+  padding: 0 !important;
+}
+
+.atmosphere-floating-card-wrap {
+  transition: transform 0.25s ease;
+}
+
+/* ==========================================================================
+   Atmosphere Showcase Continuous Auto-Scrolling Reel (Seamless Infinite Marquee)
+   ========================================================================== */
+.atmosphere-reel-viewport {
+  position: relative;
+  width: 270px;
+  height: clamp(480px, 66vh, 600px);
+  overflow: hidden;
+  mask-image: linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.atmosphere-reel-track {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  width: 100%;
+  animation: atmosphereScrollVertical 6.5s linear infinite;
+  will-change: transform;
+}
+
+.atmosphere-reel-viewport:hover .atmosphere-reel-track,
+.atmosphere-reel-viewport:focus-within .atmosphere-reel-track,
+.atmosphere-reel-viewport:active .atmosphere-reel-track {
+  animation-play-state: paused !important;
+}
+
+.atmosphere-reel-item {
+  width: 100%;
+  flex-shrink: 0;
+}
+
+.atmosphere-reel-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: rgba(16, 43, 70, 0.75);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(197, 164, 93, 0.4);
+  padding: 0.3rem 0.8rem;
+  border-radius: 999px;
+  color: var(--color-gold);
+  font-size: 0.625rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  user-select: none;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  transition: all 0.25s ease;
+}
+
+@keyframes atmosphereScrollVertical {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-33.333333%);
+  }
+}
+
+@keyframes atmosphereScrollHorizontal {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-33.333333%);
+  }
+}
+
+@media (max-width: 1200px) {
+  .atmosphere-inner-grid {
+    padding: 6rem 3rem 4rem !important;
+    gap: 2rem !important;
+  }
+
+  .atmosphere-phase-nav {
+    left: 3rem !important;
+    bottom: 1.75rem !important;
+  }
+}
+
+@media (max-width: 1024px) {
+  .atmosphere-sticky-wrap {
+    height: 100vh !important;
+    height: 100svh !important;
+    min-height: 100vh !important;
+    max-height: none !important;
+    top: 0 !important;
+    padding: 0 !important;
+  }
+
+  .atmosphere-inner-grid {
+    padding: 5.5rem 2.5rem 3.5rem !important;
+    gap: 1.75rem !important;
+    grid-template-columns: 1.1fr 0.9fr !important;
+  }
+
+  .atmosphere-phase-nav {
+    left: 2.5rem !important;
+    bottom: 1.5rem !important;
+  }
+}
+
+@media (max-width: 900px) {
+  #atmosphere-showcases {
+    height: 280vh !important;
+  }
+
+  .atmosphere-sticky-wrap {
+    height: 100vh !important;
+    height: 100svh !important;
+    min-height: 100vh !important;
+    max-height: none !important;
+    position: sticky !important;
+    top: 0 !important;
+    padding: 0 !important;
+  }
+
+  .atmosphere-block {
+    border-radius: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  .atmosphere-inner-grid {
+    grid-template-columns: 1fr !important;
+    grid-template-rows: auto 1fr !important;
+    padding: 5.5rem 1.5rem 3.5rem !important;
+    gap: 1rem !important;
+  }
+
+  .atmosphere-text-container {
+    height: auto !important;
+    min-height: 180px !important;
+    align-items: flex-start !important;
+  }
+
+  .atmosphere-text-block {
+    max-width: 100% !important;
+  }
+
+  .atmosphere-text-block h2 {
+    font-size: clamp(2rem, 6.5vw, 2.75rem) !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .atmosphere-desc {
+    font-size: 0.875rem !important;
+    line-height: 1.45 !important;
+    margin-bottom: 1rem !important;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .atmosphere-cards-wrap {
+    height: auto !important;
+    min-height: 180px !important;
+    justify-content: center !important;
+    align-items: center !important;
+    width: 100% !important;
+    overflow: hidden !important;
+  }
+
+  .atmosphere-cards-col {
+    position: relative !important;
+    right: auto !important;
+    left: auto !important;
+    transform: none !important;
+    width: 100% !important;
+    align-items: center !important;
+  }
+
+  .atmosphere-reel-viewport {
+    width: 100% !important;
+    max-width: 100vw !important;
+    height: auto !important;
+    overflow: hidden !important;
+    mask-image: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%) !important;
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%) !important;
+    padding: 0.35rem 0 !important;
+  }
+
+  .atmosphere-reel-track {
+    flex-direction: row !important;
+    gap: 0.85rem !important;
+    width: max-content !important;
+    animation: atmosphereScrollHorizontal 6s linear infinite !important;
+  }
+
+  .atmosphere-reel-viewport:hover .atmosphere-reel-track,
+  .atmosphere-reel-viewport:focus-within .atmosphere-reel-track,
+  .atmosphere-reel-viewport:active .atmosphere-reel-track {
+    animation-play-state: paused !important;
+  }
+
+  .atmosphere-reel-item {
+    flex-shrink: 0 !important;
+    width: 200px !important;
+  }
+
+  .atmosphere-card-img-wrap {
+    height: 95px !important;
+  }
+
+  .atmosphere-phase-nav {
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    bottom: 0.85rem !important;
+    width: max-content !important;
+  }
+}
+
+@media (max-width: 540px) {
+  .atmosphere-reel-item {
+    width: 180px !important;
+  }
+}
+
+/* 3. Lookbook Stacking Cards Responsiveness & Stage Layout */
+.stacking-cards-container {
+  width: 100%;
+  position: relative;
+}
+
+.stacking-cards-sticky-viewport {
+  position: sticky;
+  top: 92px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  overflow: visible !important;
+}
+
+.stacking-cards-stage {
+  position: relative;
+  width: 100%;
+  max-width: 1040px;
+  height: 580px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible !important;
+}
+
+.lookbook-stack-card {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 28px !important;
+  overflow: visible !important;
+  transition: box-shadow 0.4s ease;
+}
+
+@media (max-width: 1024px) {
+  .stacking-cards-stage {
+    height: 500px !important;
+    max-width: 92% !important;
+  }
+  .lookbook-stack-card {
+    height: 500px !important;
+    border-radius: 22px !important;
+    overflow: visible !important;
+  }
+}
+
+@media (max-width: 768px) {
+  #lookbook-inspiration {
+    padding: 3.5rem 0 3rem !important;
+  }
+
+  .stacking-cards-sticky-viewport {
+    top: 80px !important;
+  }
+
+  .stacking-cards-stage {
+    height: 420px !important;
+    max-width: 95% !important;
+  }
+
+  .lookbook-stack-card {
+    height: 420px !important;
+    border-radius: 18px !important;
+    overflow: visible !important;
+  }
+
+  .lookbook-card-title {
+    font-size: 1.45rem !important;
+  }
+
+  .lookbook-title-wrap {
+    left: 1.5rem !important;
+    bottom: 1.5rem !important;
+    right: 1.5rem !important;
+  }
+
+}
+
+@media (max-width: 480px) {
+  .stacking-cards-stage {
+    height: 380px !important;
+    max-width: 96% !important;
+  }
+
+  .lookbook-stack-card {
+    height: 380px !important;
+    border-radius: 14px !important;
+  }
+
+  .lookbook-header {
+    margin-bottom: 2rem !important;
+  }
+
+  .hotspot-popover {
+    width: 220px !important;
+    padding: 0.75rem !important;
+  }
+}
+
+/* Signature Catalogue Sticky Glassmorphic Filter Bar */
+.catalogue-filter-bar {
+  position: relative;
+  z-index: 20;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (min-width: 768px) {
+  .catalogue-filter-bar {
+    position: sticky;
+    top: 74px;
+    background: rgba(247, 243, 234, 0.94);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    padding: 1rem 0.5rem !important;
+    border-radius: 4px;
+    box-shadow: 0 6px 20px -8px rgba(16, 43, 70, 0.08);
+  }
+}
+
+/* 4. Respect User Reduced-Motion Preferences */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+
+
+

@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { CartItem, CurrencyCode } from "@/types";
-import { CURRENCIES } from "@/data/products";
+import { CURRENCIES, SHOWROOM_INFO, formatPriceWithCurrency, formatNumberDeterministic } from "@/data/products";
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -32,30 +32,61 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
 
   const curr = CURRENCIES[currency];
 
-  const subtotalUSD = items.reduce(
-    (sum, item) => sum + item.product.priceUSD * item.quantity,
-    0
-  );
-  const subtotal = Math.round(subtotalUSD * curr.rate);
+  const subtotal = items.reduce((sum, item) => {
+    const unitPrice =
+      currency === "INR"
+        ? item.product.priceINR || Math.round(item.product.priceUSD * 83.5)
+        : Math.round(item.product.priceUSD * curr.rate);
+    return sum + unitPrice * item.quantity;
+  }, 0);
+
   const discountAmount = Math.round(subtotal * (discountPercent / 100));
   const finalTotal = subtotal - discountAmount;
 
-  // Free delivery threshold ($1,500 USD converted)
-  const freeShippingThreshold = Math.round(1500 * curr.rate);
+  // Free delivery threshold (₹50,000 for Kurnool & Rayalaseema)
+  const freeShippingThreshold = currency === "INR" ? 50000 : Math.round(1500 * curr.rate);
   const progressPercent = Math.min(100, Math.round((subtotal / freeShippingThreshold) * 100));
   const remainingForFree = Math.max(0, freeShippingThreshold - subtotal);
 
   const applyPromo = (e: React.FormEvent) => {
     e.preventDefault();
-    if (promoCode.trim().toUpperCase() === "AUDO10") {
+    const code = promoCode.trim().toUpperCase();
+    if (code === "KURNOOL10" || code === "CASA10" || code === "MF10") {
       setDiscountPercent(10);
-      setPromoMessage("10% Collector Welcome Privilege Applied!");
-    } else if (promoCode.trim().toUpperCase() === "COPENHAGEN") {
+      setPromoMessage("10% Casablanca Showroom Privilege Applied!");
+    } else if (code === "WEDDING15" || code === "CASA15" || code === "MF15") {
       setDiscountPercent(15);
-      setPromoMessage("15% Scandinavian VIP Privilege Applied!");
+      setPromoMessage("15% Complete Home Suite Special Privilege Applied!");
     } else {
-      setPromoMessage("Invalid code. Try using code 'AUDO10'");
+      setPromoMessage("Invalid code. Try using code 'CASA10'");
     }
+  };
+
+  const handleWhatsAppEnquiry = () => {
+    if (items.length === 0) return;
+    const itemList = items
+      .map(
+        (it, idx) =>
+          `${idx + 1}. ${it.product.name} (${it.finish.name}) x ${it.quantity} = ${formatPriceWithCurrency(
+            it.product.priceUSD * it.quantity,
+            currency,
+            (it.product.priceINR || Math.round(it.product.priceUSD * 83.5)) * it.quantity
+          )}`
+      )
+      .join("\n");
+
+    const totalText = formatPriceWithCurrency(
+      Math.round(finalTotal / (currency === "INR" ? 83.5 : curr.rate)),
+      currency,
+      currency === "INR" ? finalTotal : undefined
+    );
+
+    const msg = `Hello Casablanca Sofas Kurnool,\nI would like to enquire about this order list:\n\n${itemList}\n\nEstimated Total: ${totalText}${
+      discountPercent > 0 ? ` (Includes ${discountPercent}% privilege code: ${promoCode})` : ""
+    }\n\nPlease verify availability, showroom display status on Bellary Road, and delivery schedule.`;
+
+    const url = `https://wa.me/${SHOWROOM_INFO.whatsappNumber}?text=${encodeURIComponent(msg)}`;
+    window.open(url, "_blank");
   };
 
   const handleCheckout = () => {
@@ -67,8 +98,8 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
         onClearCart();
         setOrderComplete(false);
         onClose();
-      }, 2500);
-    }, 1200);
+      }, 3000);
+    }, 1000);
   };
 
   if (!isOpen) return null;
@@ -79,9 +110,9 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
       style={{
         position: "fixed",
         inset: 0,
-        backgroundColor: "rgba(22, 21, 20, 0.6)",
-        backdropFilter: "blur(4px)",
-        zIndex: 50,
+        backgroundColor: "rgba(16, 43, 70, 0.65)",
+        backdropFilter: "blur(6px)",
+        zIndex: 1000,
         display: "flex",
         justifyContent: "flex-end",
         animation: "fadeIn 0.25s ease",
@@ -92,10 +123,10 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
         id="cart-drawer-panel"
         style={{
           width: "100%",
-          maxWidth: "480px",
+          maxWidth: "490px",
           height: "100%",
-          backgroundColor: "var(--color-canvas)",
-          boxShadow: "var(--shadow-drawer)",
+          backgroundColor: "#F7F3EA",
+          boxShadow: "-8px 0 32px rgba(16, 43, 70, 0.2)",
           display: "flex",
           flexDirection: "column",
           animation: "slideLeft 0.35s cubic-bezier(0.16, 1, 0.3, 1)",
@@ -107,25 +138,40 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
         <div
           style={{
             padding: "1.75rem 2rem",
-            borderBottom: "1px solid var(--color-card-border)",
+            borderBottom: "1px solid rgba(16, 43, 70, 0.1)",
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
+            backgroundColor: "#FFFFFF",
           }}
         >
           <div>
+            <span
+              style={{
+                fontSize: "0.6875rem",
+                letterSpacing: "0.16em",
+                textTransform: "uppercase",
+                color: "var(--color-gold)",
+                fontWeight: 700,
+                display: "block",
+                marginBottom: "0.25rem",
+              }}
+            >
+              CASABLANCA SOFAS
+            </span>
             <h3
               style={{
                 fontFamily: "var(--font-serif)",
                 fontSize: "1.5rem",
-                letterSpacing: "0.04em",
+                color: "var(--color-navy)",
+                letterSpacing: "0.02em",
                 lineHeight: 1,
               }}
             >
-              Your Shopping Bag
+              Enquiry & Order List
             </h3>
-            <span style={{ fontSize: "0.75rem", color: "var(--color-text-muted)" }}>
-              {items.length} {items.length === 1 ? "creation" : "creations"}
+            <span style={{ fontSize: "0.75rem", color: "var(--color-charcoal)", opacity: 0.75 }}>
+              {items.length} {items.length === 1 ? "furniture piece" : "furniture pieces"} selected
             </span>
           </div>
 
@@ -138,19 +184,19 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
               fontSize: "1.25rem",
               cursor: "pointer",
               padding: "0.5rem",
-              color: "var(--color-text-main)",
+              color: "var(--color-navy)",
             }}
           >
             ✕
           </button>
         </div>
 
-        {/* Free Shipping Progress Indicator */}
+        {/* Delivery Privilege Indicator */}
         <div
           style={{
-            padding: "1rem 2rem",
-            backgroundColor: "var(--color-canvas-alt)",
-            borderBottom: "1px solid var(--color-card-border)",
+            padding: "0.9rem 2rem",
+            backgroundColor: "#FFFFFF",
+            borderBottom: "1px solid rgba(16, 43, 70, 0.08)",
           }}
         >
           <div
@@ -160,20 +206,21 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
               fontSize: "0.75rem",
               marginBottom: "0.4rem",
               fontWeight: 500,
+              color: "var(--color-charcoal)",
             }}
           >
-            <span>
+            <span suppressHydrationWarning>
               {remainingForFree > 0
-                ? `Add ${curr.symbol}${remainingForFree.toLocaleString()} for White Glove Delivery`
-                : "✦ You have unlocked Complimentary White Glove Delivery"}
+                ? `Add ${curr.symbol}${formatNumberDeterministic(remainingForFree)} for Free Kurnool Delivery`
+                : "✦ You have unlocked Free Kurnool & Rayalaseema Delivery & Setup"}
             </span>
-            <span style={{ color: "var(--color-brass)", fontWeight: 600 }}>{progressPercent}%</span>
+            <span style={{ color: "var(--color-gold)", fontWeight: 700 }}>{progressPercent}%</span>
           </div>
           <div
             style={{
               width: "100%",
               height: "4px",
-              backgroundColor: "rgba(28, 26, 24, 0.1)",
+              backgroundColor: "rgba(16, 43, 70, 0.08)",
               borderRadius: "2px",
               overflow: "hidden",
             }}
@@ -182,14 +229,14 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
               style={{
                 width: `${progressPercent}%`,
                 height: "100%",
-                backgroundColor: "var(--color-brass)",
+                backgroundColor: "var(--color-gold)",
                 transition: "width 0.4s ease",
               }}
             />
           </div>
         </div>
 
-        {/* Bag Content Body */}
+        {/* Content Body */}
         <div style={{ flex: 1, padding: "1.5rem 2rem", overflowY: "auto" }}>
           {items.length === 0 ? (
             <div style={{ textAlign: "center", padding: "4rem 1rem" }}>
@@ -198,12 +245,12 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                   width: "56px",
                   height: "56px",
                   borderRadius: "50%",
-                  background: "var(--color-canvas-alt)",
+                  background: "rgba(16, 43, 70, 0.06)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   margin: "0 auto 1.25rem",
-                  color: "var(--color-text-muted)",
+                  color: "var(--color-gold)",
                 }}
               >
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -211,39 +258,45 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                   <line x1="3" y1="6" x2="21" y2="6"></line>
                 </svg>
               </div>
-              <h4 style={{ fontFamily: "var(--font-serif)", fontSize: "1.25rem", marginBottom: "0.5rem" }}>
-                Your shopping bag is quiet.
+              <h4 style={{ fontFamily: "var(--font-serif)", fontSize: "1.35rem", color: "var(--color-navy)", marginBottom: "0.5rem" }}>
+                Your enquiry list is empty.
               </h4>
-              <p style={{ fontSize: "0.8125rem", color: "var(--color-text-muted)", marginBottom: "1.75rem" }}>
-                Explore our curated architectural furniture and lighting archive.
+              <p style={{ fontSize: "0.8125rem", color: "var(--color-charcoal)", opacity: 0.8, marginBottom: "1.75rem" }}>
+                Explore our curated sofas, recliners, teakwood beds and marble dining sets.
               </p>
               <button onClick={onClose} className="btn-secondary" style={{ padding: "0.75rem 1.5rem" }}>
-                DISCOVER COLLECTION
+                EXPLORE CATALOGUE
               </button>
             </div>
           ) : (
-            <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
               {items.map((item, index) => {
-                const itemPrice = Math.round(item.product.priceUSD * curr.rate);
+                const itemPrice =
+                  currency === "INR"
+                    ? item.product.priceINR || Math.round(item.product.priceUSD * 83.5)
+                    : Math.round(item.product.priceUSD * curr.rate);
+
                 return (
                   <div
                     key={`${item.product.id}-${item.finish.id}-${index}`}
                     style={{
                       display: "grid",
                       gridTemplateColumns: "80px 1fr auto",
-                      gap: "1rem",
-                      paddingBottom: "1.25rem",
-                      borderBottom: "1px solid rgba(28, 26, 24, 0.08)",
+                      gap: "1.1rem",
+                      padding: "1rem",
+                      background: "#FFFFFF",
+                      borderRadius: "6px",
+                      border: "1px solid rgba(16, 43, 70, 0.08)",
                       alignItems: "center",
                     }}
                   >
-                    {/* Thumbnail */}
                     <div
                       style={{
                         position: "relative",
                         width: "80px",
                         height: "90px",
                         backgroundColor: "#EFECE6",
+                        borderRadius: "4px",
                         overflow: "hidden",
                       }}
                     >
@@ -255,12 +308,12 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                       />
                     </div>
 
-                    {/* Details */}
                     <div>
                       <h4
                         style={{
                           fontFamily: "var(--font-serif)",
                           fontSize: "1.0625rem",
+                          color: "var(--color-navy)",
                           lineHeight: 1.25,
                           marginBottom: "0.25rem",
                         }}
@@ -270,7 +323,8 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                       <div
                         style={{
                           fontSize: "0.75rem",
-                          color: "var(--color-text-muted)",
+                          color: "var(--color-charcoal)",
+                          opacity: 0.8,
                           display: "flex",
                           alignItems: "center",
                           gap: "0.4rem",
@@ -294,8 +348,8 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                         style={{
                           display: "inline-flex",
                           alignItems: "center",
-                          border: "1px solid var(--color-card-border)",
-                          borderRadius: "2px",
+                          border: "1px solid rgba(16, 43, 70, 0.2)",
+                          borderRadius: "4px",
                           background: "#FFFFFF",
                         }}
                       >
@@ -308,11 +362,12 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                             height: "24px",
                             cursor: "pointer",
                             fontSize: "0.875rem",
+                            color: "var(--color-navy)",
                           }}
                         >
                           -
                         </button>
-                        <span style={{ fontSize: "0.75rem", padding: "0 0.5rem", fontWeight: 600 }}>
+                        <span style={{ fontSize: "0.75rem", padding: "0 0.5rem", fontWeight: 700, color: "var(--color-navy)" }}>
                           {item.quantity}
                         </span>
                         <button
@@ -324,6 +379,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                             height: "24px",
                             cursor: "pointer",
                             fontSize: "0.875rem",
+                            color: "var(--color-navy)",
                           }}
                         >
                           +
@@ -331,11 +387,10 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                       </div>
                     </div>
 
-                    {/* Item Total & Remove */}
                     <div style={{ textAlign: "right" }}>
-                      <div style={{ fontWeight: 600, fontSize: "0.9375rem", marginBottom: "0.5rem" }}>
+                      <div suppressHydrationWarning style={{ fontWeight: 700, fontSize: "0.9375rem", color: "var(--color-navy)", marginBottom: "0.5rem" }}>
                         {curr.symbol}
-                        {(itemPrice * item.quantity).toLocaleString()}
+                        {formatNumberDeterministic(itemPrice * item.quantity)}
                       </div>
                       <button
                         onClick={() => onRemoveItem(index)}
@@ -343,9 +398,9 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                           background: "transparent",
                           border: "none",
                           fontSize: "0.6875rem",
-                          letterSpacing: "0.1em",
+                          letterSpacing: "0.08em",
                           textTransform: "uppercase",
-                          color: "var(--color-text-muted)",
+                          color: "#888",
                           cursor: "pointer",
                           textDecoration: "underline",
                         }}
@@ -360,12 +415,12 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
           )}
         </div>
 
-        {/* Drawer Footer (Subtotal & Checkout) */}
+        {/* Drawer Footer */}
         {items.length > 0 && (
           <div
             style={{
               padding: "1.5rem 2rem",
-              borderTop: "1px solid var(--color-card-border)",
+              borderTop: "1px solid rgba(16, 43, 70, 0.1)",
               backgroundColor: "#FFFFFF",
             }}
           >
@@ -373,15 +428,16 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
             <form onSubmit={applyPromo} style={{ display: "flex", gap: "0.5rem", marginBottom: "1rem" }}>
               <input
                 type="text"
-                placeholder="PROMO CODE (e.g. AUDO10)"
+                placeholder="PROMO CODE (e.g. KURNOOL10)"
                 value={promoCode}
                 onChange={(e) => setPromoCode(e.target.value)}
                 style={{
                   flex: 1,
                   padding: "0.55rem 0.8rem",
                   fontSize: "0.75rem",
-                  letterSpacing: "0.1em",
-                  border: "1px solid var(--color-card-border)",
+                  letterSpacing: "0.06em",
+                  border: "1px solid rgba(16, 43, 70, 0.2)",
+                  borderRadius: "4px",
                   fontFamily: "var(--font-sans)",
                   outline: "none",
                 }}
@@ -390,9 +446,10 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                 type="submit"
                 style={{
                   padding: "0.55rem 1rem",
-                  background: "var(--color-dark)",
+                  background: "var(--color-navy)",
                   color: "#FFFFFF",
                   border: "none",
+                  borderRadius: "4px",
                   fontSize: "0.6875rem",
                   letterSpacing: "0.12em",
                   cursor: "pointer",
@@ -407,9 +464,9 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
               <div
                 style={{
                   fontSize: "0.6875rem",
-                  color: discountPercent > 0 ? "var(--color-brass)" : "var(--color-terracotta)",
+                  color: discountPercent > 0 ? "var(--color-gold)" : "#C0392B",
                   marginBottom: "0.75rem",
-                  fontWeight: 500,
+                  fontWeight: 600,
                 }}
               >
                 {promoMessage}
@@ -418,21 +475,21 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
 
             {/* Calculations */}
             <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem", marginBottom: "1.25rem" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.8125rem", color: "var(--color-text-secondary)" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.8125rem", color: "var(--color-charcoal)" }}>
                 <span>Subtotal</span>
-                <span>{curr.symbol}{subtotal.toLocaleString()}</span>
+                <span suppressHydrationWarning>{curr.symbol}{formatNumberDeterministic(subtotal)}</span>
               </div>
 
               {discountPercent > 0 && (
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.8125rem", color: "var(--color-brass)" }}>
-                  <span>Privilege ({discountPercent}%)</span>
-                  <span>-{curr.symbol}{discountAmount.toLocaleString()}</span>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.8125rem", color: "var(--color-gold)" }}>
+                  <span>Showroom Privilege ({discountPercent}%)</span>
+                  <span suppressHydrationWarning>-{curr.symbol}{formatNumberDeterministic(discountAmount)}</span>
                 </div>
               )}
 
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.8125rem", color: "var(--color-text-secondary)" }}>
-                <span>White Glove Delivery</span>
-                <span>{remainingForFree === 0 ? "FREE" : "Calculated at next step"}</span>
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.8125rem", color: "var(--color-charcoal)" }}>
+                <span>Delivery & Professional Installation</span>
+                <span>{remainingForFree === 0 ? "FREE (Kurnool & Area)" : "Complimentary on ₹50k+"}</span>
               </div>
 
               <div
@@ -440,52 +497,64 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                   display: "flex",
                   justifyContent: "space-between",
                   fontSize: "1.125rem",
-                  fontWeight: 600,
-                  color: "var(--color-text-main)",
+                  fontWeight: 700,
+                  color: "var(--color-navy)",
                   paddingTop: "0.75rem",
-                  borderTop: "1px solid rgba(28, 26, 24, 0.08)",
+                  borderTop: "1px solid rgba(16, 43, 70, 0.1)",
                 }}
               >
-                <span>Estimated Total</span>
-                <span>{curr.symbol}{finalTotal.toLocaleString()}</span>
+                <span>Estimated Price Guidance</span>
+                <span suppressHydrationWarning>{curr.symbol}{formatNumberDeterministic(finalTotal)}</span>
               </div>
             </div>
 
-            {/* Checkout CTA */}
-            {orderComplete ? (
-              <div
+            {/* Conversion Actions */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.65rem" }}>
+              <button
+                onClick={handleWhatsAppEnquiry}
+                className="btn-whatsapp"
                 style={{
-                  padding: "1rem",
-                  background: "var(--color-canvas)",
-                  border: "1px solid var(--color-brass)",
-                  textAlign: "center",
-                  fontSize: "0.875rem",
-                  color: "var(--color-text-main)",
-                  fontWeight: 600,
+                  width: "100%",
+                  padding: "0.95rem",
+                  borderRadius: "6px",
+                  fontSize: "0.8125rem",
+                  letterSpacing: "0.08em",
+                  justifyContent: "center",
                 }}
               >
-                ✓ Order Confirmed! Thank you for choosing AUDO.
-              </div>
-            ) : (
-              <button
-                onClick={handleCheckout}
-                disabled={isCheckingOut}
-                className="btn-primary"
-                style={{ width: "100%", padding: "1.1rem" }}
-              >
-                {isCheckingOut ? (
-                  <span>CONNECTING TO CONCIERGE CHECKOUT...</span>
-                ) : (
-                  <>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                      <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                    </svg>
-                    <span>SECURE CONCIERGE CHECKOUT</span>
-                  </>
-                )}
+                SEND ENQUIRY ON WHATSAPP
               </button>
-            )}
+
+              {orderComplete ? (
+                <div
+                  style={{
+                    padding: "0.85rem",
+                    background: "#F7F3EA",
+                    border: "1px solid var(--color-gold)",
+                    borderRadius: "6px",
+                    textAlign: "center",
+                    fontSize: "0.8125rem",
+                    color: "var(--color-navy)",
+                    fontWeight: 600,
+                  }}
+                >
+                  ✓ Enquiry Registered! Our Kurnool sales team will reach out.
+                </div>
+              ) : (
+                <button
+                  onClick={handleCheckout}
+                  disabled={isCheckingOut}
+                  className="btn-primary"
+                  style={{ width: "100%", padding: "0.85rem", borderRadius: "6px", fontSize: "0.75rem" }}
+                >
+                  {isCheckingOut ? (
+                    <span>CONFIRMING SHOWROOM ENQUIRY...</span>
+                  ) : (
+                    <span>REQUEST SHOWROOM VISIT & QUOTE</span>
+                  )}
+                </button>
+              )}
+            </div>
 
             <div
               style={{
@@ -495,12 +564,13 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                 gap: "1rem",
                 marginTop: "1rem",
                 fontSize: "0.6875rem",
-                color: "var(--color-text-muted)",
+                color: "var(--color-charcoal)",
+                opacity: 0.75,
               }}
             >
-              <span>✦ 30-Day In-Home Trial</span>
-              <span>✦ Insured Global Freight</span>
-              <span>✦ 10-Yr Warranty</span>
+              <span>✦ 15-Yr Teakwood Warranty</span>
+              <span>✦ Zero-Sag Foam</span>
+              <span>✦ Kurnool Showroom Visit</span>
             </div>
           </div>
         )}

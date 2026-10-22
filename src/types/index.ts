@@ -1,9 +1,9 @@
-export type CurrencyCode = "USD" | "EUR" | "GBP" | "DKK";
+export type CurrencyCode = "INR" | "USD" | "EUR" | "GBP";
 
 export interface CurrencyConfig {
   code: CurrencyCode;
   symbol: string;
-  rate: number; // relative to USD
+  rate: number; // relative to USD (1.0 = USD, 83.5 = INR)
 }
 
 export interface ProductFinish {
@@ -13,12 +13,24 @@ export interface ProductFinish {
   image?: string;
 }
 
+export interface ProductColorOption {
+  name: string;
+  hex: string;
+}
+
+export interface ExpandableSpecSection {
+  title: string;
+  content: string;
+}
+
 export interface Product {
   id: string;
   name: string;
   subtitle: string;
-  category: "furniture" | "lighting" | "objects";
+  category: "sofas" | "recliners" | "beds" | "dining" | "curtains" | "furniture" | "lighting" | "objects";
   priceUSD: number;
+  priceINR?: number;
+  priceOnEnquiry?: boolean;
   designer: string;
   year: number;
   description: string;
@@ -28,6 +40,14 @@ export interface Product {
   primaryImage: string;
   hoverImage?: string;
   tag?: string;
+  badge?: string;
+  warranty?: string;
+  availability?: string;
+  configurations?: string[];
+  colors?: ProductColorOption[];
+  budgetRanges?: string[];
+  galleryImages?: string[];
+  expandableSections?: ExpandableSpecSection[];
   finishes: ProductFinish[];
   rating: number;
   reviewCount: number;

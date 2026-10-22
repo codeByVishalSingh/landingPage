@@ -1,316 +1,254 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import Image from "next/image";
+import React, { useEffect, useState, useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 
 export const Hero: React.FC = () => {
-  const [cphTime, setCphTime] = useState("");
   const [isMounted, setIsMounted] = useState(false);
-  const { scrollY } = useScroll();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const desktopVideoRef = useRef<HTMLVideoElement>(null);
+  const mobileVideoRef = useRef<HTMLVideoElement>(null);
 
-  // Subtle parallax transforms
-  const backgroundY = useTransform(scrollY, [0, 800], ["0%", "18%"]);
-  const contentY = useTransform(scrollY, [0, 800], ["0%", "24%"]);
-  const opacity = useTransform(scrollY, [0, 600], [1, 0.2]);
+  // Scroll-linked cinematic scale & depth transition
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end start"],
+  });
+
+  const videoScale = useTransform(scrollYProgress, [0, 1], [1, 0.94]);
+  const videoRadius = useTransform(scrollYProgress, [0, 1], ["0px", "28px"]);
+  const videoY = useTransform(scrollYProgress, [0, 1], ["0%", "15%"]);
+  const textY = useTransform(scrollYProgress, [0, 1], ["0px", "-45px"]);
+  const textOpacity = useTransform(scrollYProgress, [0, 0.75], [1, 0]);
 
   useEffect(() => {
     setIsMounted(true);
-    const updateTime = () => {
-      const now = new Date();
-      // Copenhagen is in CET/CEST
-      const timeStr = now.toLocaleTimeString("en-GB", {
-        timeZone: "Europe/Copenhagen",
-        hour: "2-digit",
-        minute: "2-digit",
-      });
-      setCphTime(timeStr);
-    };
-    updateTime();
-    const interval = setInterval(updateTime, 10000);
-    return () => clearInterval(interval);
+    [desktopVideoRef.current, mobileVideoRef.current].forEach((video) => {
+      if (video) {
+        video.defaultMuted = true;
+        video.muted = true;
+        const playPromise = video.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(() => {
+            // Handled browser autoplay restrictions gracefully
+          });
+        }
+      }
+    });
   }, []);
 
   return (
-    <section
-      id="hero"
-      style={{
-        position: "relative",
-        minHeight: "94vh",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "5rem 0 4rem",
-        overflow: "hidden",
-      }}
-    >
-      {/* Background Photography Container with Parallax */}
+    <section id="hero" ref={containerRef} className="hero-section">
+      {/* Scroll-Linked 3D Cinematic Video Stage */}
       <motion.div
+        className="hero-video-wrapper"
         style={{
-          position: "absolute",
-          inset: "-10% 0",
-          zIndex: 0,
-          y: isMounted ? backgroundY : undefined,
+          scale: isMounted ? videoScale : 1,
+          borderRadius: isMounted ? videoRadius : "0px",
+          y: isMounted ? videoY : "0%",
+          transformOrigin: "center center",
+          overflow: "hidden",
         }}
       >
-        <Image
-          src="/images/hero.jpg"
-          alt="Audo Copenhagen Architectural Living Interior"
-          fill
-          priority
-          sizes="100vw"
-          style={{
-            objectFit: "cover",
-            objectPosition: "center 38%",
-            filter: "brightness(0.95) saturate(1.02)",
-          }}
+        {/* Desktop Landscape Video (16:9 / 1280x720) */}
+        <video
+          ref={desktopVideoRef}
+          src="/hero.mp4"
+          poster="/images/hero.jpg"
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="auto"
+          aria-hidden="true"
+          className="hero-video-element hero-video-desktop"
         />
-        {/* Soft Warm Film & Vignette Overlay */}
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            background:
-              "linear-gradient(180deg, rgba(250, 248, 245, 0.45) 0%, rgba(250, 248, 245, 0.7) 45%, rgba(250, 248, 245, 0.96) 100%)",
-            backdropFilter: "blur(1.5px)",
-          }}
+
+        {/* Mobile Portrait Video (9:16 / 720x1280 story.mp4) */}
+        <video
+          ref={mobileVideoRef}
+          src="/story.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="auto"
+          aria-hidden="true"
+          className="hero-video-element hero-video-mobile"
         />
+
+        {/* Ambient Film Vignette Gradient */}
+        <div className="hero-video-overlay" />
       </motion.div>
 
-      {/* Hero Content with Staggered Framer Motion Entrance */}
-      <motion.div
-        className="container"
-        style={{
-          position: "relative",
-          zIndex: 1,
-          textAlign: "center",
-          maxWidth: "1080px",
-          margin: "0 auto",
-          y: isMounted ? contentY : undefined,
-          opacity: isMounted ? opacity : 1,
-        }}
-      >
-        {/* Top Status Bar: Copenhagen Time & Seasonal Archive */}
+      {/* Hero Content with 3D Parallax Drift */}
+      <div className="container hero-content-container">
         <motion.div
-          initial={{ opacity: 0, y: -15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "1.25rem",
-            padding: "0.5rem 1.4rem",
-            background: "rgba(255, 255, 255, 0.82)",
-            backdropFilter: "blur(12px)",
-            border: "1px solid rgba(28, 26, 24, 0.1)",
-            borderRadius: "40px",
-            marginBottom: "2rem",
-            boxShadow: "var(--shadow-sm)",
+            y: isMounted ? textY : "0px",
+            opacity: isMounted ? textOpacity : 1,
           }}
+          className="hero-text-block"
         >
-          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+          {/* Subtle 3D Pill Badge */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.6rem",
+              background: "rgba(16, 43, 70, 0.55)",
+              backdropFilter: "blur(12px)",
+              WebkitBackdropFilter: "blur(12px)",
+              border: "1px solid rgba(200, 184, 154, 0.35)",
+              padding: "0.4rem 1rem",
+              borderRadius: "30px",
+              marginBottom: "1.25rem",
+            }}
+          >
             <span
               style={{
-                width: "7px",
-                height: "7px",
+                width: "6px",
+                height: "6px",
                 borderRadius: "50%",
-                background: "var(--color-brass)",
-                display: "inline-block",
-                boxShadow: "0 0 8px rgba(182, 146, 105, 0.8)",
+                backgroundColor: "var(--color-gold)",
+                boxShadow: "0 0 10px var(--color-gold)",
               }}
             />
             <span
-              suppressHydrationWarning
               style={{
                 fontSize: "0.6875rem",
-                letterSpacing: "0.18em",
+                letterSpacing: "0.22em",
                 textTransform: "uppercase",
                 fontWeight: 600,
-                color: "var(--color-text-main)",
+                color: "#FAF8F5",
               }}
             >
-              COPENHAGEN {cphTime ? `${cphTime} CET` : "FLAGSHIP"}
+              CASABLANCA SOFAS · ARCHITECTURAL LIVING
             </span>
-          </div>
-
-          <span style={{ color: "rgba(28, 26, 24, 0.2)" }}>|</span>
-
-          <span
-            style={{
-              fontSize: "0.6875rem",
-              letterSpacing: "0.18em",
-              textTransform: "uppercase",
-              fontWeight: 500,
-              color: "var(--color-text-secondary)",
-            }}
-          >
-            SPRING / SUMMER 2026 ARCHIVE
-          </span>
-        </motion.div>
-
-        {/* Editorial Headline matching Behance Reference */}
-        <div style={{ overflow: "hidden", marginBottom: "0.5rem" }}>
-          <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7 }}
-            style={{
-              fontSize: "0.8125rem",
-              letterSpacing: "0.26em",
-              textTransform: "uppercase",
-              fontWeight: 600,
-              color: "var(--color-brass)",
-              marginBottom: "0.75rem",
-            }}
-          >
-            NEW ARRIVALS
           </motion.div>
+
+          {/* Main Headline */}
           <motion.h1
-            initial={{ y: "100%" }}
-            animate={{ y: "0%" }}
-            transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
-            style={{
-              fontSize: "clamp(3.5rem, 8.5vw, 6.75rem)",
-              lineHeight: 1.0,
-              fontWeight: 300,
-              color: "var(--color-text-main)",
-              letterSpacing: "-0.035em",
-            }}
+            initial={{ opacity: 0, y: 25 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.85, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            className="hero-title"
           >
-            New <span style={{ fontStyle: "italic", fontWeight: 400 }}>Designs.</span>
+            Curated Living Spaces <br />
+            <span style={{ fontStyle: "italic", fontWeight: 300, color: "var(--color-gold)" }}>
+              for Discerning Homes.
+            </span>
           </motion.h1>
-        </div>
 
-        {/* Subtitle with Fade In */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
-          style={{
-            fontSize: "clamp(1.0625rem, 2vw, 1.25rem)",
-            color: "var(--color-text-secondary)",
-            maxWidth: "720px",
-            margin: "1rem auto 3rem",
-            lineHeight: 1.7,
-            fontWeight: 300,
-          }}
-        >
-          Quiet spaces, soft minimalism. Honed natural travertine, sculpted bouclé seating,
-          and ambient paper lanterns designed to elevate human contemplation.
-        </motion.p>
+          {/* Subtitle description */}
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
+            className="hero-subtitle"
+          >
+            Explore handcrafted solid Burma teakwood suites, German motorized OKIN recliners, and Italian monolithic marble dining tables engineered for generations of timeless comfort.
+          </motion.p>
 
-        {/* Action CTAs */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: "1.25rem",
-            flexWrap: "wrap",
-            marginBottom: "4.5rem",
-          }}
-        >
-          <a href="#3d-studio" className="btn-primary" id="hero-3d-btn" data-cursor="hover">
-            <span>EXPERIENCE 3D STUDIO</span>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-              <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-              <line x1="12" y1="22.08" x2="12" y2="12"></line>
-            </svg>
-          </a>
-
-          <a href="#collection" className="btn-secondary" id="hero-explore-btn" data-cursor="hover">
-            <span>EXPLORE COLLECTION</span>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <line x1="5" y1="12" x2="19" y2="12"></line>
-              <polyline points="12 5 19 12 12 19"></polyline>
-            </svg>
-          </a>
-        </motion.div>
-
-        {/* Scandinavian Heritage Metrics Bar */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.55, ease: [0.16, 1, 0.3, 1] }}
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))",
-            gap: "1.5rem",
-            padding: "2rem 1.75rem",
-            background: "rgba(255, 255, 255, 0.8)",
-            backdropFilter: "blur(14px)",
-            border: "1px solid rgba(28, 26, 24, 0.08)",
-            boxShadow: "var(--shadow-card)",
-          }}
-        >
-          {[
-            { metric: "1976", label: "Copenhagen Heritage", desc: "Decades of Danish craftsmanship" },
-            { metric: "100%", label: "FSC® Certified Woods", desc: "Traceable European timber" },
-            { metric: "38+", label: "International Honors", desc: "Red Dot & Wallpaper* Awards" },
-            { metric: "Nordhavn", label: "Flagship Showroom", desc: "The Audo Hotel & Concept Store" },
-          ].map((item, idx) => (
-            <div
-              key={idx}
-              style={{
-                textAlign: "center",
-                borderRight: idx < 3 ? "1px solid rgba(28, 26, 24, 0.08)" : "none",
-                padding: "0 0.5rem",
-              }}
-              className="metric-card"
+          {/* Action CTA Group */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
+            className="hero-cta-group"
+            style={{ display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap" }}
+          >
+            <a
+              href="#collection"
+              id="hero-shop-now-btn"
+              className="hero-cta-btn"
             >
-              <div
-                style={{
-                  fontFamily: "var(--font-serif)",
-                  fontSize: "2rem",
-                  lineHeight: 1.1,
-                  color: "var(--color-text-main)",
-                  marginBottom: "0.25rem",
-                  fontWeight: 500,
-                }}
-              >
-                {item.metric}
-              </div>
-              <div
-                style={{
-                  fontSize: "0.6875rem",
-                  letterSpacing: "0.14em",
-                  textTransform: "uppercase",
-                  fontWeight: 600,
-                  color: "var(--color-text-main)",
-                  marginBottom: "0.2rem",
-                }}
-              >
-                {item.label}
-              </div>
-              <div
-                style={{
-                  fontSize: "0.75rem",
-                  color: "var(--color-text-muted)",
-                }}
-              >
-                {item.desc}
-              </div>
-            </div>
-          ))}
+              <span>EXPLORE COLLECTION</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </a>
+
+            <a
+              href="/furniture-showroom-kurnool"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "0.5rem",
+                color: "#FAF8F5",
+                fontSize: "0.8125rem",
+                letterSpacing: "0.1em",
+                textTransform: "uppercase",
+                textDecoration: "none",
+                fontWeight: 500,
+                padding: "0.85rem 1.6rem",
+                borderRadius: "30px",
+                border: "1px solid rgba(255, 255, 255, 0.25)",
+                background: "rgba(255, 255, 255, 0.06)",
+                backdropFilter: "blur(10px)",
+                transition: "all 0.25s ease",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = "var(--color-gold)";
+                e.currentTarget.style.color = "var(--color-gold)";
+                e.currentTarget.style.transform = "translateY(-2px)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.25)";
+                e.currentTarget.style.color = "#FAF8F5";
+                e.currentTarget.style.transform = "translateY(0)";
+              }}
+            >
+              <span>VISIT SHOWROOM</span>
+            </a>
+          </motion.div>
+        </motion.div>
+      </div>
+
+      {/* Floating 3D Scroll Cue Indicator */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1, duration: 1 }}
+        style={{
+          position: "absolute",
+          bottom: "2.25rem",
+          left: "50%",
+          transform: "translateX(-50%)",
+          zIndex: 10,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: "0.4rem",
+          cursor: "pointer",
+        }}
+        onClick={() => {
+          document.getElementById("collection")?.scrollIntoView({ behavior: "smooth" });
+        }}
+      >
+        <span
+          style={{
+            fontSize: "0.625rem",
+            letterSpacing: "0.24em",
+            textTransform: "uppercase",
+            color: "rgba(250, 248, 245, 0.65)",
+            fontWeight: 600,
+          }}
+        >
+          SCROLL TO EXPLORE
+        </span>
+        <motion.div
+          animate={{ y: [0, 6, 0] }}
+          transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(250, 248, 245, 0.75)" strokeWidth="2">
+            <path d="M7 13l5 5 5-5M7 6l5 5 5-5" />
+          </svg>
         </motion.div>
       </motion.div>
-
-      <style jsx>{`
-        @media (max-width: 768px) {
-          .metric-card {
-            border-right: none !important;
-            border-bottom: 1px solid rgba(28, 26, 24, 0.08);
-            padding-bottom: 1rem !important;
-          }
-          .metric-card:last-child {
-            border-bottom: none;
-          }
-        }
-      `}</style>
     </section>
   );
 };
