@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { SHOWROOM_INFO } from "@/data/products";
 import { SmoothScroll } from "@/components/SmoothScroll";
+import { AutoInquiryPopup } from "@/components/AutoInquiryPopup";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://casablancasofas.com"),
@@ -103,6 +104,7 @@ export default function RootLayout({
       <body suppressHydrationWarning>
         <SmoothScroll />
         {children}
+        <AutoInquiryPopup />
       </body>
     </html>
   );
